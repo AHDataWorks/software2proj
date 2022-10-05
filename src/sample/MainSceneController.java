@@ -18,10 +18,11 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 
-public class MainSceneController {
+public class MainSceneController implements Initializable {
 
     @FXML
     private AnchorPane scenePane;
@@ -31,7 +32,20 @@ public class MainSceneController {
     private Button exitButton;
 
     @FXML
+    private Button updateCustomer;
+
+    @FXML
     private Button addCustomerButton;
+
+    @FXML
+    private Button addAppointmentButton;
+
+    @FXML
+    private Button updateAppointmentButton;
+
+    Locale currentLocale = Locale.getDefault();
+
+
 
     @FXML
     void exitProgram(ActionEvent event) {
@@ -56,5 +70,48 @@ public class MainSceneController {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         stage.show();
+    }
+
+    @FXML
+    void switchToUpdateCustomer(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("updateCustomer.fxml"));
+//        AddProductController controller = fxmlLoader.getController();
+//        controller.initAddProductData(imsInventory);
+
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    @FXML
+    void switchToAddAppointment(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addAppointment.fxml"));
+//        AddProductController controller = fxmlLoader.getController();
+//        controller.initAddProductData(imsInventory);
+
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    @FXML
+    void switchToUpdateAppointment(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("updateAppointment.fxml"));
+//        AddProductController controller = fxmlLoader.getController();
+//        controller.initAddProductData(imsInventory);
+
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        if (resourceBundle.equals("loginText_fr.properties")) {
+
+        }
     }
 }

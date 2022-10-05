@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="413.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.AddCustomerController">
+<AnchorPane prefHeight="413.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.UpdateCustomerController">
    <children>
       <TextField editable="false" layoutX="137.0" layoutY="116.0" opacity="0.6" promptText="Auto Gen - Disabled" />
       <TextField layoutX="137.0" layoutY="154.0" />
@@ -26,7 +26,7 @@
             <Font name="System Bold Italic" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="173.0" layoutY="75.0" text="Add Customer">
+      <Label layoutX="173.0" layoutY="75.0" text="Update Customer">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>

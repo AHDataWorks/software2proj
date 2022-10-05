@@ -8,11 +8,16 @@ import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        Locale currentLocale = Locale.getDefault();
+        ResourceBundle bundle = ResourceBundle.getBundle("sample/loginText",currentLocale);
+        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"), bundle);
         primaryStage.setTitle("Andrew Hobbs Software II Project");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
