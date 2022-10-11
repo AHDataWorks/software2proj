@@ -15,9 +15,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Locale currentLocale = Locale.getDefault();
-        ResourceBundle bundle = ResourceBundle.getBundle("sample/loginText",currentLocale);
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"), bundle);
+
+        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Andrew Hobbs Software II Project");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();

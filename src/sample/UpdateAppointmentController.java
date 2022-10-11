@@ -14,7 +14,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.text.SimpleDateFormat;
+import java.sql.Time;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.io.IOException;
 import java.net.URL;
@@ -23,9 +24,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.*;
 import java.util.ResourceBundle;
-import java.util.TimeZone;
 
-public class AddAppointmentController implements Initializable {
+public class UpdateAppointmentController implements Initializable {
     @FXML
     private TextField appointmentIDText;
 
@@ -116,9 +116,35 @@ public class AddAppointmentController implements Initializable {
 
     static ObservableList<String> allTypesForComboBox = FXCollections.observableArrayList();
 
-
+    public static Appointments selectedAppointment;
 
     public static int userID;
+
+    public static LocalDate selectedStartDate;
+
+    public static LocalDate selectedEndDate;
+
+    public static LocalTime selectedStartTime;
+
+    public static String selectedStartLocalTime;
+
+    public static String selectedEndLocalTime;
+
+    public static LocalTime selectedEndTime;
+
+    public static String selectedContact;
+
+    public static String selectedType;
+
+    public static int selectedApptID;
+
+    public static Timestamp selectedCreatedTime;
+
+    @FXML
+    public static void initSelectedAppointment(Appointments appointment) {
+        selectedAppointment = appointment;
+        selectedApptID = appointment.getApptID();
+    }
 
     @FXML
     public static void initUserID(int userIDNumber) {
@@ -133,6 +159,30 @@ public class AddAppointmentController implements Initializable {
     @FXML
     public static void initAllTypes() throws SQLException {
         allTypesForComboBox = AppointmentsQuery.allTypes();
+    }
+
+    @FXML
+    public static void initSelectedType(Appointments selectedAppointment) {
+        selectedType = selectedAppointment.getType();
+    }
+
+    @FXML
+    public static void initFormattedTimes(Appointments selectedAppointment) {
+        selectedCreatedTime = selectedAppointment.getCreateDate();
+        Timestamp selectedEndTimestamp = selectedAppointment.getEnd();
+        Timestamp selectedStartTimestamp = selectedAppointment.getStart();
+        LocalDateTime selectedStartLocalDateTime = selectedStartTimestamp.toLocalDateTime();
+        LocalDateTime selectedEndLocalDateTime = selectedEndTimestamp.toLocalDateTime();
+        String tempSelectedStartLocalTime = selectedStartTimestamp.toLocalDateTime().toLocalTime().toString();
+        String tempSelectedEndLocalTime = selectedEndTimestamp.toLocalDateTime().toLocalTime().toString();
+
+        selectedStartDate = selectedStartLocalDateTime.toLocalDate();
+        selectedEndDate = selectedEndLocalDateTime.toLocalDate();
+
+        System.out.println(tempSelectedEndLocalTime);
+
+        selectedStartLocalTime = localTimeConverter(tempSelectedStartLocalTime);
+        selectedEndLocalTime = localTimeConverter(tempSelectedEndLocalTime);
     }
 
     @FXML
@@ -161,6 +211,84 @@ public class AddAppointmentController implements Initializable {
         allTimesForComboBox.add("9:00 PM");
         allTimesForComboBox.add("10:00 PM");
         allTimesForComboBox.add("11:00 PM");
+    }
+
+    @FXML
+    public static String localTimeConverter(String comboBoxTime) {
+        String result = null;
+        if (comboBoxTime.equals("00:00")){
+            result = "12:00 AM";
+        }
+        if (comboBoxTime.equals("01:00")){
+            result = "1:00 AM";
+        }
+        if (comboBoxTime.equals("02:00")){
+            result = "2:00 AM";
+        }
+        if (comboBoxTime.equals("03:00")){
+            result = "3:00 AM";
+        }
+        if (comboBoxTime.equals("04:00")){
+            result = "4:00 AM";
+        }
+        if (comboBoxTime.equals("05:00")){
+            result = "5:00 AM";
+        }
+        if (comboBoxTime.equals("06:00")){
+            result = "6:00 AM";
+        }
+        if (comboBoxTime.equals("07:00")){
+            result = "7:00 AM";
+        }
+        if (comboBoxTime.equals("08:00")){
+            result = "8:00 AM";
+        }
+        if (comboBoxTime.equals("09:00")){
+            result = "9:00 AM";
+        }
+        if (comboBoxTime.equals("10:00")){
+            result = "10:00 AM";
+        }
+        if (comboBoxTime.equals("11:00")){
+            result = "11:00 AM";
+        }
+        if (comboBoxTime.equals("12:00")){
+            result = "12:00 PM";
+        }
+        if (comboBoxTime.equals("13:00")){
+            result = "1:00 PM";
+        }
+        if (comboBoxTime.equals("14:00")){
+            result = "2:00 PM";
+        }
+        if (comboBoxTime.equals("15:00")){
+            result = "3:00 PM";
+        }
+        if (comboBoxTime.equals("16:00")){
+            result = "4:00 PM";
+        }
+        if (comboBoxTime.equals("17:00")){
+            result = "5:00 PM";
+        }
+        if (comboBoxTime.equals("18:00")){
+            result = "6:00 PM";
+        }
+        if (comboBoxTime.equals("19:00")){
+            result = "7:00 PM";
+        }
+        if (comboBoxTime.equals("20:00")){
+            result = "8:00 PM";
+        }
+        if (comboBoxTime.equals("21:00")){
+            result = "9:00 PM";
+        }
+        if (comboBoxTime.equals("22:00")){
+            result = "10:00 PM";
+        }
+        if (comboBoxTime.equals("23:00")){
+            result = "11:00 PM";
+        }
+        return result;
     }
 
     @FXML
@@ -241,6 +369,8 @@ public class AddAppointmentController implements Initializable {
         return result;
     }
 
+
+
     @FXML
     public static Timestamp dateTimeFormatter(LocalTime lt,LocalDate ld) {
         String formattedString = null;
@@ -251,6 +381,13 @@ public class AddAppointmentController implements Initializable {
         formattedString = myZDT.toLocalDate().toString() + " " + lt +":00";
         System.out.println(formattedString);
         return Timestamp.valueOf(formattedString);
+    }
+
+    @FXML
+    public static String initSelectedContact(Appointments selectedAppointment) throws SQLException {
+        int selectedContactID = selectedAppointment.getContactID();
+        selectedContact = ContactsQuery.getContactName(selectedContactID);
+        return selectedContact;
     }
 
     @FXML
@@ -299,7 +436,7 @@ public class AddAppointmentController implements Initializable {
 //        String endTime = endTimeComboBox.getValue().toString();
         String type = typeComboBox.getValue();
         String customerID = customerIDText.getText();
-        String userIDNew = userIDText.getText();
+        int userIDNew = Integer.parseInt(userIDText.getText());
         String descriptionText = descriptionFieldText.getText();
 
         if (title.equals("")) {
@@ -350,7 +487,7 @@ public class AddAppointmentController implements Initializable {
             errorTextLabel.setText("* Required Field");
         }
 
-        if (userIDNew.equals("")) {
+        if (userIDText.equals("")) {
             userIDError.setVisible(true);
             errorTextLabel.setVisible(true);
             errorTextLabel.setText("* Required Field");
@@ -386,8 +523,6 @@ public class AddAppointmentController implements Initializable {
         Date date = new Date();
         long time = date.getTime();
         Timestamp ts = new Timestamp(time);
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-
 
         String userName = UsersQuery.getUserName(userID);
 
@@ -405,7 +540,7 @@ public class AddAppointmentController implements Initializable {
                 && endDateText.getValue() != null
                 && endTimeComboBox.getValue() != null
                 && !customerID.equals("")
-                && !userIDNew.equals("")
+                && !userIDText.equals("")
                 && !descriptionText.equals("")
                 && typeComboBox.getValue() != null) {
             passCheck = true;
@@ -413,7 +548,7 @@ public class AddAppointmentController implements Initializable {
 
         if (passCheck == true) {
             System.out.println(contactID);
-            AppointmentsQuery.addAppointment(title,descriptionText,location,type,startDateTime,endDateTime,ts,userName,ts,userName,realCustomerID,userID,contactID);
+            AppointmentsQuery.updateAppointment(title,descriptionText,location,type,startDateTime,endDateTime,selectedCreatedTime,userName,ts,userName,realCustomerID,userIDNew,contactID,selectedApptID);
             allAppointments = AppointmentsQuery.allAppointmentsByUserID(userID);
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("mainScene.fxml"));
             MainSceneController controller = fxmlLoader.getController();
@@ -434,6 +569,26 @@ public class AddAppointmentController implements Initializable {
         startTimeComboBox.setItems(allTimesForComboBox);
         endTimeComboBox.setItems(allTimesForComboBox);
         typeComboBox.setItems(allTypesForComboBox);
+
+        if (selectedAppointment != null) {
+//
+//                InHouse c = (InHouse) selectedPart;
+//                inHouseRadioButton.setSelected(true);
+//                textToToggle.setText("Machine ID");
+                this.appointmentIDText.setText(String.valueOf(selectedAppointment.getApptID()));
+                this.titleText.setText(String.valueOf(selectedAppointment.getTitle()));
+                this.locationText.setText(String.valueOf(selectedAppointment.getLocation()));
+                this.contactComboBox.setValue(selectedContact);
+                this.customerIDText.setText(String.valueOf(selectedAppointment.getCustomerID()));
+                this.userIDText.setText(String.valueOf(selectedAppointment.getUserID()));
+                this.descriptionFieldText.setText(String.valueOf(selectedAppointment.getDescription()));
+                this.startDateText.setValue(selectedStartDate);
+                this.endDateText.setValue(selectedEndDate);
+                this.startTimeComboBox.setValue(selectedStartLocalTime);
+                this.endTimeComboBox.setValue(selectedEndLocalTime);
+                this.typeComboBox.setValue(selectedType);
+
+            }
 
     }
 }

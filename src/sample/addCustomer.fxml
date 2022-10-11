@@ -9,11 +9,11 @@
 
 <AnchorPane prefHeight="413.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.AddCustomerController">
    <children>
-      <TextField editable="false" layoutX="137.0" layoutY="116.0" opacity="0.6" promptText="Auto Gen - Disabled" />
-      <TextField layoutX="137.0" layoutY="154.0" />
-      <TextField layoutX="137.0" layoutY="196.0" />
-      <TextField layoutX="137.0" layoutY="236.0" />
-      <TextField layoutX="137.0" layoutY="280.0" />
+      <TextField fx:id="customerIDText" editable="false" layoutX="137.0" layoutY="116.0" opacity="0.6" promptText="Auto Gen - Disabled" />
+      <TextField fx:id="customerNameText" layoutX="137.0" layoutY="154.0" />
+      <TextField fx:id="addressText" layoutX="137.0" layoutY="196.0" />
+      <TextField fx:id="postalCodeText" layoutX="137.0" layoutY="236.0" />
+      <TextField fx:id="phoneText" layoutX="137.0" layoutY="280.0" />
       <Button fx:id="cancelButton" layoutX="411.0" layoutY="366.0" mnemonicParsing="false" onAction="#cancelButton" text="Cancel" />
       <Button fx:id="saveSubmit" layoutX="332.0" layoutY="366.0" mnemonicParsing="false" onAction="#saveSubmit" text="Save" />
       <Label layoutX="63.0" layoutY="120.0" text="Customer ID" />
@@ -21,7 +21,7 @@
       <Label layoutX="87.0" layoutY="200.0" text="Address" />
       <Label layoutX="65.0" layoutY="240.0" text="Postal Code" />
       <Label layoutX="47.0" layoutY="284.0" text="Phone Number" />
-      <Label layoutX="46.0" layoutY="337.0" text="Error Text" textFill="RED">
+      <Label fx:id="errorLabel" layoutX="46.0" layoutY="337.0" text="Error Text" textFill="RED" visible="false">
          <font>
             <Font name="System Bold Italic" size="12.0" />
          </font>
@@ -31,27 +31,37 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="customerNameError" layoutX="294.0" layoutY="158.0" text="*" textFill="RED">
+      <Label fx:id="customerNameError" layoutX="294.0" layoutY="158.0" text="*" textFill="RED" visible="false">
          <font>
             <Font name="System Bold Italic" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="addressError" layoutX="294.0" layoutY="200.0" text="*" textFill="RED">
+      <Label fx:id="addressError" layoutX="294.0" layoutY="200.0" text="*" textFill="RED" visible="false">
          <font>
             <Font name="System Bold Italic" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="postalCodeError" layoutX="294.0" layoutY="240.0" text="*" textFill="RED">
+      <Label fx:id="postalCodeError" layoutX="294.0" layoutY="240.0" text="*" textFill="RED" visible="false">
          <font>
             <Font name="System Bold Italic" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="phoneNumberError" layoutX="294.0" layoutY="284.0" text="*" textFill="RED">
+      <Label fx:id="phoneNumberError" layoutX="294.0" layoutY="284.0" text="*" textFill="RED" visible="false">
          <font>
             <Font name="System Bold Italic" size="12.0" />
          </font>
       </Label>
-      <ComboBox layoutX="332.0" layoutY="154.0" prefWidth="150.0" promptText="Country" />
-      <ComboBox layoutX="332.0" layoutY="196.0" prefWidth="150.0" promptText="State / Province" />
+      <ComboBox fx:id="countryComboBox" layoutX="332.0" layoutY="154.0" onAction="#countrySelected" prefWidth="150.0" promptText="Country" />
+      <ComboBox fx:id="stateComboBox" layoutX="332.0" layoutY="196.0" prefWidth="150.0" promptText="State / Province" visible="false" />
+      <Label fx:id="countryError" layoutX="492.0" layoutY="158.0" text="*" textFill="RED" visible="false">
+         <font>
+            <Font name="System Bold Italic" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="stateError" layoutX="489.0" layoutY="200.0" text="*" textFill="RED" visible="false">
+         <font>
+            <Font name="System Bold Italic" size="12.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

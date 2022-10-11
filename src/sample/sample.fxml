@@ -8,10 +8,13 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="242.0" prefWidth="375.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.LoginController">
    <children>
       <Label fx:id="loginLabel" layoutX="170.0" layoutY="56.0" text="login" />
-      <TextField layoutX="121.0" layoutY="96.0" />
-      <TextField layoutX="121.0" layoutY="134.0" />
-      <Label fx:id="userIDLabel" layoutX="77.0" layoutY="100.0" text="User ID" />
-      <Label fx:id="passwordLabel" layoutX="66.0" layoutY="138.0" text="Password" />
-      <Button layoutX="162.0" layoutY="178.0" mnemonicParsing="false" onAction="#loginSubmit" text="Submit" />
+      <TextField fx:id="userIDText" layoutX="121.0" layoutY="96.0" />
+      <TextField fx:id="passwordText" layoutX="121.0" layoutY="134.0" />
+      <Label fx:id="userIDLabel" layoutX="47.0" layoutY="96.0" text="User ID" />
+      <Label fx:id="passwordLabel" layoutX="30.0" layoutY="138.0" text="Password" />
+      <Button fx:id="loginButton" layoutX="162.0" layoutY="178.0" mnemonicParsing="false" onAction="#loginSubmit" text="Submit" />
+      <Label fx:id="errorMessageLabel" layoutX="109.0" layoutY="211.0" text="Incorrect User ID or Password" textFill="RED" visible="false" />
+      <Label fx:id="regionLabel" layoutX="3.0" layoutY="6.0" text="Region:" />
+      <Label fx:id="regionResult" layoutX="47.0" layoutY="6.0" text="default" />
    </children>
 </AnchorPane>
