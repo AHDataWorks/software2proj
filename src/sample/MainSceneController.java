@@ -33,6 +33,9 @@ public class MainSceneController implements Initializable {
     Stage stage;
 
     @FXML
+    private Label errorLabel;
+
+    @FXML
     private Button exitButton;
 
     @FXML
@@ -83,6 +86,9 @@ public class MainSceneController implements Initializable {
     private TableView<Customers> customersTable;
 
     @FXML
+    private Button deleteCustomerButton;
+
+    @FXML
     public static void initUserID(int userIDNumber) throws SQLException {
 
         userID = userIDNumber;
@@ -102,12 +108,18 @@ public class MainSceneController implements Initializable {
     }
 
     @FXML
+    static void initAllCustomersExisting(ObservableList allCustomersFromModify) {
+        allCustomers = allCustomersFromModify;
+    }
+
+    @FXML
     private Label userNameLabel;
 
 
 
     @FXML
     void exitProgram(ActionEvent event) throws IOException {
+        errorLabel.setVisible(false);
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Exit");
         alert.setHeaderText("You're about to exit");
@@ -121,6 +133,7 @@ public class MainSceneController implements Initializable {
 
     @FXML
     void switchToAddCustomer(ActionEvent event) throws IOException, SQLException {
+        errorLabel.setVisible(false);
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addCustomer.fxml"));
         AddCustomerController controller = fxmlLoader.getController();
         controller.initCountriesForComboBox();
@@ -134,21 +147,25 @@ public class MainSceneController implements Initializable {
 
     @FXML
     void switchToUpdateCustomer(ActionEvent event) throws IOException, SQLException {
+        errorLabel.setVisible(false);
         Customers selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("updateCustomer.fxml"));
-        UpdateCustomerController controller = fxmlLoader.getController();
-        controller.initSelectedCustomer(selectedCustomer);
-        controller.initCountriesForComboBox();
-        controller.initUserID(userID);
+        if (selectedCustomer != null) {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("updateCustomer.fxml"));
+            UpdateCustomerController controller = fxmlLoader.getController();
+            controller.initSelectedCustomer(selectedCustomer);
+            controller.initCountriesForComboBox();
+            controller.initUserID(userID);
 
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setScene(scene);
-        stage.show();
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setScene(scene);
+            stage.show();
+        }
     }
 
     @FXML
     void switchToAddAppointment(ActionEvent event) throws IOException, SQLException {
+        errorLabel.setVisible(false);
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addAppointment.fxml"));
         AddAppointmentController controller = fxmlLoader.getController();
         controller.initAllAppts(allAppointments);
@@ -166,6 +183,7 @@ public class MainSceneController implements Initializable {
 
     @FXML
     void switchToUpdateAppointment(ActionEvent event) throws IOException, SQLException {
+        errorLabel.setVisible(false);
         Appointments selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
         if (selectedAppointment != null) {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("updateAppointment.fxml"));
@@ -189,10 +207,12 @@ public class MainSceneController implements Initializable {
     }
 
     @FXML
-    void switchToViewAllAppointments(ActionEvent event) throws IOException {
+    void switchToViewAllAppointments(ActionEvent event) throws IOException, SQLException {
+        errorLabel.setVisible(false);
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("viewAllAppointments.fxml"));
-//        AddProductController controller = fxmlLoader.getController();
-//        controller.initAddProductData(imsInventory);
+        viewAllAppointmentsController controller = fxmlLoader.getController();
+        controller.initAllAppointmentsForAllUsers();
+        controller.initCurrentWeek();
 
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(fxmlLoader.load());
@@ -202,6 +222,7 @@ public class MainSceneController implements Initializable {
 
     @FXML
     void deleteAppointment(MouseEvent event) throws IOException, SQLException {
+        errorLabel.setVisible(false);
         Appointments appointment = appointmentsTable.getSelectionModel().getSelectedItem();
         String appointmentType = appointment.getType();
         int appointmentID = appointment.getApptID();
@@ -216,6 +237,37 @@ public class MainSceneController implements Initializable {
                 allAppointments.remove(appointment);
                 AppointmentsQuery.deleteAppointment(appointment.getApptID());
 
+            }
+
+        }
+    }
+
+    @FXML
+    void deleteCustomer(MouseEvent event) throws IOException, SQLException {
+        boolean passCheck = true;
+        Customers customer = customersTable.getSelectionModel().getSelectedItem();
+        int customerID = customer.getCustomerID();
+        String customerName = customer.getCustomerName();
+        if (customer != null) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Appointment Deletion Confirmation");
+            alert.setHeaderText("You are about to delete customer: " + customerName);
+            alert.setContentText("Are you sure you want to delete this customer?");
+
+            if(alert.showAndWait().get() == ButtonType.OK) {
+                for(Appointments appointment : allAppointments) {
+                    if(appointment.getCustomerID() == customerID) {
+                        passCheck = false;
+                        errorLabel.setVisible(true);
+                        errorLabel.setText(customerName + " cannot be removed because of a conflicting appointment still scheduled.");
+                    }
+                }
+                if(passCheck) {
+                allCustomers.remove(customer);
+                CustomersQuery.deleteCustomer(customerID);
+                errorLabel.setVisible(true);
+                errorLabel.setText(customerName + " has been deleted from customer records.");
+                }
             }
 
         }

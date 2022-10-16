@@ -169,7 +169,7 @@ public class UpdateCustomerController implements Initializable {
         customerNameError.setVisible(false);
         countryError.setVisible(false);
 
-        String customerID = customerIDText.getText();
+        int customerID = Integer.parseInt(customerIDText.getText());
         String customerName = customerNameText.getText();
         String address = addressText.getText();
         String postalCode = postalCodeText.getText();
@@ -232,11 +232,11 @@ public class UpdateCustomerController implements Initializable {
 
         if (passcheck == true) {
 
-            CustomersQuery.addCustomer(customerName, address, postalCode, phone, ts, userName, ts, userName, divisionID);
-
+            CustomersQuery.updateCustomer(customerName, address, postalCode, phone, ts, userName, ts, userName, divisionID, customerID);
+            allCustomers = CustomersQuery.getAllCustomers();
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("mainScene.fxml"));
             MainSceneController controller = fxmlLoader.getController();
-            controller.initAllCustomers();
+            controller.initAllCustomersExisting(allCustomers);
 
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(fxmlLoader.load());

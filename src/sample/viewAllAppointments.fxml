@@ -9,31 +9,29 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="560.0" prefWidth="910.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.viewAllAppointmentsController">
    <children>
       <TableView fx:id="appointmentTable" layoutX="55.0" layoutY="80.0" prefHeight="393.0" prefWidth="802.0">
         <columns>
-          <TableColumn prefWidth="46.0" text="Apt ID" />
-          <TableColumn prefWidth="44.0" text="Title" />
-            <TableColumn prefWidth="73.0" text="Description" />
-            <TableColumn prefWidth="74.0" text="Location" />
-            <TableColumn prefWidth="64.0" text="Contact" />
-            <TableColumn prefWidth="67.0" text="Type" />
-            <TableColumn text="Start Time" />
-            <TableColumn prefWidth="75.0" text="End Time" />
-            <TableColumn prefWidth="89.0" text="Start Date" />
-            <TableColumn prefWidth="90.0" text="End Date" />
-            <TableColumn prefWidth="110.0" text="Customer ID" />
+          <TableColumn fx:id="aptIDColumn" prefWidth="46.0" text="Apt ID" />
+          <TableColumn fx:id="titleColumn" prefWidth="44.0" text="Title" />
+            <TableColumn fx:id="descriptionColumn" prefWidth="73.0" text="Description" />
+            <TableColumn fx:id="locationColumn" prefWidth="74.0" text="Location" />
+            <TableColumn fx:id="contactColumn" prefWidth="66.0" text="Contact" />
+            <TableColumn fx:id="typeColumn" prefWidth="90.0" text="Type" />
+            <TableColumn fx:id="startColumn" prefWidth="128.0" text="Start Time" />
+            <TableColumn fx:id="endColumn" prefWidth="125.0" text="End Time" />
+            <TableColumn fx:id="customerIDColumn" prefWidth="75.0" text="Customer ID" />
+            <TableColumn fx:id="userIDColumn" text="User ID" />
         </columns>
       </TableView>
-      <RadioButton fx:id="viewAllButton" layoutX="293.0" layoutY="40.0" mnemonicParsing="false" selected="true" text="View All">
+      <RadioButton fx:id="viewAllButton" layoutX="293.0" layoutY="40.0" mnemonicParsing="false" onAction="#radioSwitch" selected="true" text="View All">
          <toggleGroup>
             <ToggleGroup fx:id="viewGroup" />
          </toggleGroup>
       </RadioButton>
-      <RadioButton fx:id="viewByWeekButton" layoutX="398.0" layoutY="40.0" mnemonicParsing="false" text="View by Week" toggleGroup="$viewGroup" />
-      <RadioButton fx:id="viewByMonthButton" layoutX="518.0" layoutY="40.0" mnemonicParsing="false" text="View by Month" toggleGroup="$viewGroup" />
+      <RadioButton fx:id="viewByWeekButton" layoutX="398.0" layoutY="40.0" mnemonicParsing="false" onAction="#radioSwitch" text="View by Week" toggleGroup="$viewGroup" />
+      <RadioButton fx:id="viewByMonthButton" layoutX="518.0" layoutY="40.0" mnemonicParsing="false" onAction="#radioSwitch" text="View by Month" toggleGroup="$viewGroup" />
       <Label layoutX="55.0" layoutY="40.0" text="Appointment Schedule">
          <font>
             <Font name="System Bold Italic" size="12.0" />

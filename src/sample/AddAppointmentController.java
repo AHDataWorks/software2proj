@@ -14,16 +14,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 import java.io.IOException;
 import java.net.URL;
 //import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.*;
-import java.util.ResourceBundle;
-import java.util.TimeZone;
 
 public class AddAppointmentController implements Initializable {
     @FXML
@@ -244,12 +244,15 @@ public class AddAppointmentController implements Initializable {
     @FXML
     public static Timestamp dateTimeFormatter(LocalTime lt,LocalDate ld) {
         String formattedString = null;
+        ZoneId setZoneID = ZoneId.of("UTC");
         LocalDateTime mldt = LocalDateTime.of(ld,lt);
         ZoneId mzid = ZoneId.systemDefault();
-        ZonedDateTime myZDT = ZonedDateTime.of(mldt,mzid);
+        ZoneId utcZoneID = ZoneId.of("UTC");
+        ZonedDateTime myZDT = ZonedDateTime.of(mldt,utcZoneID);
+
 
         formattedString = myZDT.toLocalDate().toString() + " " + lt +":00";
-        System.out.println(formattedString);
+//        System.out.println(formattedString);
         return Timestamp.valueOf(formattedString);
     }
 
@@ -273,8 +276,45 @@ public class AddAppointmentController implements Initializable {
         stage.show();
     }
 
+    public static Date convertToDate(LocalDate date, ZoneId zoneId) {
+        return Date.from(date
+                .atStartOfDay().atZone(
+                        zoneId)
+                .toInstant());
+    }
+
+    public static boolean timeCheck(Timestamp startDateTime, Timestamp endDateTime, Timestamp ts) throws ParseException {
+        boolean result = true;
+
+        Calendar calendar = Calendar.getInstance();
+        Calendar easternTime = new GregorianCalendar(TimeZone.getTimeZone("EST"));
+        DayOfWeek sunday = DayOfWeek.SUNDAY;
+        DayOfWeek saturday = DayOfWeek.SATURDAY;
+
+        if (endDateTime.before(startDateTime)) {
+            result = false;
+        }
+
+        if (startDateTime.after(ts)) {
+            result = false;
+        }
+
+        DateFormat tzFormat = new SimpleDateFormat("yyyy-MM-dd");
+        tzFormat.setTimeZone(TimeZone.getTimeZone("EST"));
+
+        tzFormat.parse(startDateTime.toString());
+
+//        Date
+//
+//
+//        if (tzFormat. == sunday)
+
+
+        return result;
+    }
+
     @FXML
-    void submitButton(ActionEvent event) throws IOException, SQLException {
+    void submitButton(ActionEvent event) throws IOException, SQLException, ParseException {
         boolean passCheck = false;
 
         errorTextLabel.setVisible(false);
@@ -368,25 +408,46 @@ public class AddAppointmentController implements Initializable {
             errorTextLabel.setText("* Required Field");
         }
 
+//        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+
+        Date date = new Date();
+        long time = date.getTime();
+        Timestamp ts = new Timestamp(time);
+
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         String testTime = timeConverter(startTimeComboBox.getValue());
         String endTime = timeConverter(endTimeComboBox.getValue());
         LocalTime ltStart = LocalTime.parse(testTime);
         LocalTime ltEnd = LocalTime.parse(endTime);
         LocalDate ldStart = startDateText.getValue();
         LocalDate ldEnd = endDateText.getValue();
+        OffsetDateTime dateTime = OffsetDateTime.now();
 
-        LocalDateTime mldt = LocalDateTime.of(ldStart,ltStart);
         ZoneId mzid = ZoneId.systemDefault();
-        ZonedDateTime myZDT = ZonedDateTime.of(mldt,mzid);
+
+//        LocalDateTime startLocalDateTime = LocalDateTime.of(ldStart,ltStart);
+////        ZonedDateTime startZDT = ZonedDateTime.of(startLocalDateTime,mzid);
+////        ZoneId utcZoneID = ZoneId.of("UTC");
+////        ZonedDateTime startUtcZDT = ZonedDateTime.ofInstant(startZDT.toInstant(), utcZoneID);
+////
+////        LocalDateTime endLocalDateTime = LocalDateTime.of(ldEnd,ltEnd);
+////        ZonedDateTime endZDT = ZonedDateTime.of(endLocalDateTime,mzid);
+////        ZonedDateTime endUtcZDT = ZonedDateTime.ofInstant(endZDT.toInstant(), utcZoneID);
+////
+////        System.out.println(startUtcZDT);
+////        System.out.println(endUtcZDT);
 
         Timestamp startDateTime = dateTimeFormatter(ltStart,ldStart);
         Timestamp endDateTime = dateTimeFormatter(ltEnd,ldEnd);
-        System.out.println(startDateTime);
 
-        Date date = new Date();
-        long time = date.getTime();
-        Timestamp ts = new Timestamp(time);
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+//        boolean timeCheckPassCheck = timeCheck(startDateTime,endDateTime,ts);
+//        System.out.println(startDateTime);
+
+
+
+
 
 
         String userName = UsersQuery.getUserName(userID);

@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 
 public abstract class CustomersQuery {
 
-    public static void addCustomer( String customerName, String address, String postalCode, String phoneNumber, Timestamp createDate, String createdBy,Timestamp lastUpdate,String lastUpdatedBy, int divisionID) throws SQLException {
+    public static void addCustomer(String customerName, String address, String postalCode, String phoneNumber, Timestamp createDate, String createdBy, Timestamp lastUpdate, String lastUpdatedBy, int divisionID) throws SQLException {
         String sql = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Create_Date, Created_By, Last_Update, Last_Updated_By, Division_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setString(1, customerName);
@@ -19,9 +19,28 @@ public abstract class CustomersQuery {
         ps.setString(4, phoneNumber);
         ps.setTimestamp(5, createDate);
         ps.setString(6, createdBy);
-        ps.setTimestamp(7,lastUpdate);
-        ps.setString(8,lastUpdatedBy);
-        ps.setInt(9,divisionID);
+        ps.setTimestamp(7, lastUpdate);
+        ps.setString(8, lastUpdatedBy);
+        ps.setInt(9, divisionID);
+        int rowsAffected = ps.executeUpdate();
+        System.out.println(rowsAffected + " rows affected.");
+
+    }
+
+    public static void updateCustomer(String customerName, String address, String postalCode, String phoneNumber, Timestamp createDate, String createdBy, Timestamp lastUpdate, String lastUpdatedBy, int divisionID, int customerID) throws SQLException {
+        String sql = "UPDATE customers SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, Create_Date = ?, Created_By = ?, Last_Update = ?, Last_Updated_By = ?, Division_ID = ? WHERE Customer_ID = ? ";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, customerName);
+        ps.setString(2, address);
+        ps.setString(3, postalCode);
+        ps.setString(4, phoneNumber);
+        ps.setTimestamp(5, createDate);
+        ps.setString(6, createdBy);
+        ps.setTimestamp(7, lastUpdate);
+        ps.setString(8, lastUpdatedBy);
+        ps.setInt(9, divisionID);
+        ps.setInt(10, customerID);
+
         int rowsAffected = ps.executeUpdate();
         System.out.println(rowsAffected + " rows affected.");
 
@@ -45,9 +64,18 @@ public abstract class CustomersQuery {
             int divisionID = rs.getInt("Division_ID");
 
 
-            Customers customer = new Customers(customerID,customerName,address,postalCode,phone,createDate,createdBy,lastUpdate,lastUpdatedBy,divisionID);
+            Customers customer = new Customers(customerID, customerName, address, postalCode, phone, createDate, createdBy, lastUpdate, lastUpdatedBy, divisionID);
             allCustomers.add(customer);
         }
         return allCustomers;
+    }
+
+    public static void deleteCustomer(int customerID) throws SQLException {
+        String sql = "DELETE FROM customers WHERE Customer_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerID);
+        int rowsAffected = ps.executeUpdate();
+        System.out.println(rowsAffected + "rows affected.");
+
     }
 }

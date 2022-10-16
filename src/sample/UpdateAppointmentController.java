@@ -15,15 +15,17 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.*;
 import java.io.IOException;
 import java.net.URL;
 //import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.*;
-import java.util.ResourceBundle;
 
 public class UpdateAppointmentController implements Initializable {
     @FXML
@@ -374,12 +376,15 @@ public class UpdateAppointmentController implements Initializable {
     @FXML
     public static Timestamp dateTimeFormatter(LocalTime lt,LocalDate ld) {
         String formattedString = null;
+        ZoneId setZoneID = ZoneId.of("UTC");
         LocalDateTime mldt = LocalDateTime.of(ld,lt);
         ZoneId mzid = ZoneId.systemDefault();
-        ZonedDateTime myZDT = ZonedDateTime.of(mldt,mzid);
+        ZoneId utcZoneID = ZoneId.of("UTC");
+        ZonedDateTime myZDT = ZonedDateTime.of(mldt,utcZoneID);
+
 
         formattedString = myZDT.toLocalDate().toString() + " " + lt +":00";
-        System.out.println(formattedString);
+//        System.out.println(formattedString);
         return Timestamp.valueOf(formattedString);
     }
 
@@ -410,9 +415,45 @@ public class UpdateAppointmentController implements Initializable {
         stage.show();
     }
 
+    public static boolean timeCheck(LocalTime lt, LocalDate ld, LocalTime ltEnd, LocalDate ldEnd,Timestamp ts) throws ParseException {
+        boolean result = true;
+
+        Calendar calendar = Calendar.getInstance();
+        Calendar easternTime = new GregorianCalendar(TimeZone.getTimeZone("EST"));
+        DayOfWeek sunday = DayOfWeek.SUNDAY;
+        DayOfWeek saturday = DayOfWeek.SATURDAY;
+
+
+
+        String startDateTimeStr = null;
+        String endDateTimeStr = null;
+        ZoneId setZoneID = ZoneId.of("EST");
+        LocalDateTime startLDT = LocalDateTime.of(ld,lt);
+        LocalDateTime endLDT = LocalDateTime.of(ldEnd,ltEnd);
+
+        ZoneId mzid = ZoneId.systemDefault();
+        ZoneId utcZoneID = ZoneId.of("UTC");
+        ZonedDateTime startZDT = ZonedDateTime.of(startLDT,utcZoneID);
+        ZonedDateTime endZDT = ZonedDateTime.of(endLDT,utcZoneID);
+
+
+        formattedString = myZDT.toLocalDate().toString() + " " + lt +":00";
+//        System.out.println(formattedString);
+
+        if (endDateTime.before(startDateTime)) {
+            result = false;
+        }
+
+        if (startDateTime.after(ts)) {
+            result = false;
+        }
+        return result;
+    }
+
     @FXML
-    void submitButton(ActionEvent event) throws IOException, SQLException {
-        boolean passCheck = false;
+    void submitButton(ActionEvent event) throws IOException, SQLException, ParseException {
+        boolean passCheck1 = false;
+        boolean passCheck2 = false;
 
         errorTextLabel.setVisible(false);
         titleError.setVisible(false);
@@ -505,6 +546,10 @@ public class UpdateAppointmentController implements Initializable {
             errorTextLabel.setText("* Required Field");
         }
 
+        Date date = new Date();
+        long time = date.getTime();
+        Timestamp ts = new Timestamp(time);
+
         String testTime = timeConverter(startTimeComboBox.getValue());
         String endTime = timeConverter(endTimeComboBox.getValue());
         LocalTime ltStart = LocalTime.parse(testTime);
@@ -512,17 +557,15 @@ public class UpdateAppointmentController implements Initializable {
         LocalDate ldStart = startDateText.getValue();
         LocalDate ldEnd = endDateText.getValue();
 
-        LocalDateTime mldt = LocalDateTime.of(ldStart,ltStart);
-        ZoneId mzid = ZoneId.systemDefault();
-        ZonedDateTime myZDT = ZonedDateTime.of(mldt,mzid);
+//        LocalDateTime mldt = LocalDateTime.of(ldStart,ltStart);
+//        ZoneId mzid = ZoneId.systemDefault();
+//        ZonedDateTime myZDT = ZonedDateTime.of(mldt,mzid);
 
         Timestamp startDateTime = dateTimeFormatter(ltStart,ldStart);
         Timestamp endDateTime = dateTimeFormatter(ltEnd,ldEnd);
         System.out.println(startDateTime);
 
-        Date date = new Date();
-        long time = date.getTime();
-        Timestamp ts = new Timestamp(time);
+
 
         String userName = UsersQuery.getUserName(userID);
 
@@ -543,10 +586,14 @@ public class UpdateAppointmentController implements Initializable {
                 && !userIDText.equals("")
                 && !descriptionText.equals("")
                 && typeComboBox.getValue() != null) {
-            passCheck = true;
+            passCheck1 = true;
         }
 
-        if (passCheck == true) {
+        if(timeCheck(startDateTime,endDateTime,ts) == true) {
+            passCheck2 = true;
+        }
+
+        if (passCheck1 == true && passCheck2 == true) {
             System.out.println(contactID);
             AppointmentsQuery.updateAppointment(title,descriptionText,location,type,startDateTime,endDateTime,selectedCreatedTime,userName,ts,userName,realCustomerID,userIDNew,contactID,selectedApptID);
             allAppointments = AppointmentsQuery.allAppointmentsByUserID(userID);
