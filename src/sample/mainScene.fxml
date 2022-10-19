@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -23,7 +24,7 @@
           <TableColumn fx:id="startTime" prefWidth="125.0" text="Start Time" />
         </columns>
       </TableView>
-      <Button fx:id="viewAllAppointmentsButton" layoutX="682.0" layoutY="399.0" mnemonicParsing="false" onAction="#switchToViewAllAppointments" text="View All Appointments" />
+      <Button fx:id="viewAllAppointmentsButton" layoutX="878.0" layoutY="284.0" mnemonicParsing="false" onAction="#switchToViewAllAppointments" text="View All Appointments" />
       <Button fx:id="addCustomerButton" layoutX="88.0" layoutY="399.0" mnemonicParsing="false" onAction="#switchToAddCustomer" text="Add Customer" />
       <Button fx:id="updateCustomer" layoutX="194.0" layoutY="399.0" mnemonicParsing="false" onAction="#switchToUpdateCustomer" text="View / Update Customer" />
       <Button fx:id="deleteCustomerButton" layoutX="438.0" layoutY="399.0" mnemonicParsing="false" onMouseClicked="#deleteCustomer" text="Delete Customer" />
@@ -37,9 +38,9 @@
             <Font name="System Bold Italic" size="15.0" />
          </font>
       </Label>
-      <Button fx:id="addAppointmentButton" layoutX="878.0" layoutY="125.0" mnemonicParsing="false" onAction="#switchToAddAppointment" text="Add Appointment" />
-      <Button fx:id="updateAppointmentButton" layoutX="878.0" layoutY="164.0" mnemonicParsing="false" onAction="#switchToUpdateAppointment" text="View / Update Appointment" />
-      <Button fx:id="deleteAppointmentButton" layoutX="878.0" layoutY="204.0" mnemonicParsing="false" onMouseClicked="#deleteAppointment" text="Delete Appointment" />
+      <Button fx:id="addAppointmentButton" layoutX="878.0" layoutY="164.0" mnemonicParsing="false" onAction="#switchToAddAppointment" text="Add Appointment" />
+      <Button fx:id="updateAppointmentButton" layoutX="878.0" layoutY="203.0" mnemonicParsing="false" onAction="#switchToUpdateAppointment" text="View / Update Appointment" />
+      <Button fx:id="deleteAppointmentButton" layoutX="878.0" layoutY="243.0" mnemonicParsing="false" onMouseClicked="#deleteAppointment" text="Delete Appointment" />
       <Label fx:id="errorLabel" layoutX="438.0" layoutY="456.0" text="Error Text" textFill="RED" visible="false">
          <font>
             <Font name="System Bold Italic" size="12.0" />
@@ -50,5 +51,8 @@
             <Font name="System Bold Italic" size="15.0" />
          </font>
       </Label>
+      <TextField fx:id="customerSearchText" layoutX="392.0" layoutY="97.0" promptText="Search Customers" />
+      <TextField fx:id="appointmentSearchText" layoutX="878.0" layoutY="126.0" promptText="Search Appointments" />
+      <Button fx:id="reportsButton" layoutX="878.0" layoutY="324.0" mnemonicParsing="false" onAction="#switchToReports" text="Reports" />
    </children>
 </AnchorPane>

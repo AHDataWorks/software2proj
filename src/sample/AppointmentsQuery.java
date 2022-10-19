@@ -93,7 +93,7 @@ public abstract class AppointmentsQuery {
 
     public static ObservableList<String> allTypes() throws SQLException {
         ObservableList<String> allTypes = FXCollections.observableArrayList();
-        String sql = "SELECT Type FROM appointments";
+        String sql = "SELECT DISTINCT Type FROM appointments";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
@@ -109,6 +109,62 @@ public abstract class AppointmentsQuery {
         ObservableList<Appointments> allAppts = FXCollections.observableArrayList();
         String sql = "SELECT * FROM appointments";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int apptID = rs.getInt("Appointment_ID");
+            String title = rs.getString("Title");
+            String description = rs.getString("Description");
+            String location = rs.getString("Location");
+            String type = rs.getString("Type");
+            java.sql.Timestamp start = rs.getTimestamp("Start");
+            java.sql.Timestamp end = rs.getTimestamp("End");
+            java.sql.Timestamp createDate = rs.getTimestamp("Create_Date");
+            String createdBy = rs.getString("Created_By");
+            java.sql.Timestamp lastUpdate = rs.getTimestamp("Last_Update");
+            String lastUpdatedBy = rs.getString("Last_Updated_By");
+            int customerID = rs.getInt("Customer_ID");
+            int userIDNumber = rs.getInt("User_ID");
+            int contactID = rs.getInt("Contact_ID");
+
+            Appointments appointment = new Appointments(apptID,title,description,location,type,start,end,createDate,createdBy,lastUpdate,lastUpdatedBy,customerID,userIDNumber,contactID);
+            allAppts.add(appointment);
+        }
+        return allAppts;
+    }
+
+    public static ObservableList<Appointments> allAppointmentsByUserIDByWeek(int userID) throws SQLException {
+        ObservableList<Appointments> allAppts = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM appointments WHERE User_ID = ? AND YEARWEEK(Start, 1) = YEARWEEK(CURDATE(), 1)";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, String.valueOf(userID));
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int apptID = rs.getInt("Appointment_ID");
+            String title = rs.getString("Title");
+            String description = rs.getString("Description");
+            String location = rs.getString("Location");
+            String type = rs.getString("Type");
+            java.sql.Timestamp start = rs.getTimestamp("Start");
+            java.sql.Timestamp end = rs.getTimestamp("End");
+            java.sql.Timestamp createDate = rs.getTimestamp("Create_Date");
+            String createdBy = rs.getString("Created_By");
+            java.sql.Timestamp lastUpdate = rs.getTimestamp("Last_Update");
+            String lastUpdatedBy = rs.getString("Last_Updated_By");
+            int customerID = rs.getInt("Customer_ID");
+            int userIDNumber = rs.getInt("User_ID");
+            int contactID = rs.getInt("Contact_ID");
+
+            Appointments appointment = new Appointments(apptID,title,description,location,type,start,end,createDate,createdBy,lastUpdate,lastUpdatedBy,customerID,userIDNumber,contactID);
+            allAppts.add(appointment);
+        }
+        return allAppts;
+    }
+
+    public static ObservableList<Appointments> allAppointmentsByUserIDByMonth(int userID) throws SQLException {
+        ObservableList<Appointments> allAppts = FXCollections.observableArrayList();
+        String sql = "SELECT * from appointments where MONTH(start)=MONTH(now()) And YEAR(start)=YEAR(now()) And User_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, String.valueOf(userID));
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             int apptID = rs.getInt("Appointment_ID");

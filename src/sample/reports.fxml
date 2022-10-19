@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ReportsController">
+   <children>
+      <TableView fx:id="contactTable" layoutX="200.0" layoutY="33.0" prefHeight="309.0" prefWidth="518.0" visible="false">
+        <columns>
+          <TableColumn prefWidth="65.0" text="Appt ID" />
+          <TableColumn prefWidth="60.0" text="Title" />
+            <TableColumn prefWidth="62.0" text="Type" />
+            <TableColumn prefWidth="120.0" text="Description" />
+            <TableColumn prefWidth="62.0" text="Start" />
+            <TableColumn prefWidth="63.0" text="End" />
+            <TableColumn prefWidth="85.0" text="Customer ID" />
+        </columns>
+      </TableView>
+      <Button fx:id="doneButton" layoutX="667.0" layoutY="355.0" mnemonicParsing="false" onAction="#switchToMain" text="Done" />
+      <Button fx:id="viewAllAppointmentsButton" layoutX="515.0" layoutY="355.0" mnemonicParsing="false" onAction="#switchToViewAllAppointments" text="View All Appointments" />
+      <Label layoutX="34.0" layoutY="33.0" text="Reports:">
+         <font>
+            <Font name="System Bold Italic" size="14.0" />
+         </font>
+      </Label>
+      <RadioButton fx:id="typeMonthButton" layoutX="34.0" layoutY="87.0" mnemonicParsing="false" onAction="#typeMonthRadioSelected" selected="true" text="Type / Month">
+         <toggleGroup>
+            <ToggleGroup fx:id="reportGroup" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="contactButton" layoutX="34.0" layoutY="121.0" mnemonicParsing="false" onAction="#contactRadioSelected" text="Contact" toggleGroup="$reportGroup" />
+      <RadioButton fx:id="userButton" layoutX="34.0" layoutY="157.0" mnemonicParsing="false" onAction="#userRadioSelected" text="User" toggleGroup="$reportGroup" />
+      <ComboBox fx:id="userComboBox" layoutX="200.0" layoutY="355.0" prefWidth="150.0" promptText="Select User" visible="false" />
+      <ComboBox fx:id="contactComboBox" layoutX="200.0" layoutY="355.0" prefWidth="150.0" promptText="Select Contact" visible="false" />
+      <ComboBox fx:id="monthComboBox" layoutX="200.0" layoutY="355.0" prefWidth="150.0" promptText="Select Month" />
+      <TableView fx:id="userTable" layoutX="201.0" layoutY="34.0" prefHeight="309.0" prefWidth="518.0" visible="false">
+         <columns>
+            <TableColumn prefWidth="65.0" text="Appt ID" />
+            <TableColumn prefWidth="60.0" text="Title" />
+            <TableColumn prefWidth="62.0" text="Type" />
+            <TableColumn prefWidth="120.0" text="Description" />
+            <TableColumn prefWidth="62.0" text="Start" />
+            <TableColumn prefWidth="63.0" text="End" />
+            <TableColumn prefWidth="85.0" text="Customer ID" />
+         </columns>
+      </TableView>
+      <Label fx:id="monthLabel" layoutX="342.0" layoutY="74.0" text="Month's Appointments">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="debriefingsLabel" layoutX="275.0" layoutY="115.0" text="De-Briefings:">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="planningSessionLabel" layoutX="478.0" layoutY="115.0" text="Planning Sessions:">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="debriefingCount" layoutX="307.0" layoutY="138.0" text="110">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="planningSessionCount" layoutX="527.0" layoutY="138.0" text="110">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

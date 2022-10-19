@@ -20,6 +20,9 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -63,6 +66,9 @@ public class MainSceneController implements Initializable {
     private TableColumn<Appointments, Integer> apptID;
 
     @FXML
+    private Button reportsButton;
+
+    @FXML
     private Button deleteAppointmentButton;
 
     Locale currentLocale = Locale.getDefault();
@@ -87,6 +93,12 @@ public class MainSceneController implements Initializable {
 
     @FXML
     private Button deleteCustomerButton;
+
+    @FXML
+    private TextField appointmentSearchText;
+
+    @FXML
+    private TextField customerSearchText;
 
     @FXML
     public static void initUserID(int userIDNumber) throws SQLException {
@@ -132,12 +144,50 @@ public class MainSceneController implements Initializable {
     }
 
     @FXML
+    static void initUpcomingApptCheck() {
+
+        String formattedString = null;
+        LocalDateTime mldt = LocalDateTime.now();
+        ZoneId mzid = ZoneId.systemDefault();
+        ZonedDateTime myZDT = ZonedDateTime.of(mldt,mzid);
+
+        LocalDateTime correctedLocalTime = mldt.plusMinutes(15);
+
+//        formattedString = myZDT.toLocalDate().toString() + " " + LocalTime.now();
+//        Timestamp correctedLocal = Timestamp.valueOf(formattedString);
+
+
+        LocalTime currentTimestamp = LocalTime.now();
+        for (Appointments appointment : allAppointments) {
+            Timestamp storedAppointmentStart = appointment.getStart();
+            LocalDateTime apptStart = storedAppointmentStart.toLocalDateTime();
+            int upcomingApptID = appointment.getApptID();
+
+            DateTimeFormatter correctedFormat = DateTimeFormatter.ofPattern("E, dd/MM HH:mm ");
+
+            int timeComparison = correctedLocalTime.compareTo(apptStart);
+
+            if (timeComparison >= 0) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Upcoming appointment.");
+                alert.setHeaderText("Appointment ID: " + upcomingApptID);
+                alert.setContentText("You have an upcoming appointment at " + apptStart.format(correctedFormat));
+                alert.show();
+            }
+        }
+//        System.out.println("local time: " + mldt);
+//        System.out.println("corrected time: " + correctedLocalTime);
+//        System.out.println(timeComparison);
+    }
+
+    @FXML
     void switchToAddCustomer(ActionEvent event) throws IOException, SQLException {
         errorLabel.setVisible(false);
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addCustomer.fxml"));
         AddCustomerController controller = fxmlLoader.getController();
         controller.initCountriesForComboBox();
         controller.initUserID(userID);
+
 
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(fxmlLoader.load());
@@ -173,6 +223,7 @@ public class MainSceneController implements Initializable {
         controller.initAllContacts();
         controller.initApptTimes();
         controller.initAllTypes();
+        controller.initTimeDifference();
 
 
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -198,6 +249,7 @@ public class MainSceneController implements Initializable {
             controller.initFormattedTimes(selectedAppointment);
             controller.initSelectedContact(selectedAppointment);
             controller.initSelectedType(selectedAppointment);
+            controller.initTimeDifference();
 
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(fxmlLoader.load());
@@ -211,8 +263,24 @@ public class MainSceneController implements Initializable {
         errorLabel.setVisible(false);
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("viewAllAppointments.fxml"));
         viewAllAppointmentsController controller = fxmlLoader.getController();
+        controller.initUserID(userID);
         controller.initAllAppointmentsForAllUsers();
         controller.initCurrentWeek();
+
+
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    @FXML
+    void switchToReports(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("reports.fxml"));
+        ReportsController controller = fxmlLoader.getController();
+//        controller.initAddProductData(imsInventory);
+        controller.initMonthsForComboBox();
+
 
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(fxmlLoader.load());
@@ -275,24 +343,70 @@ public class MainSceneController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if (allAppointments == null) {
+        userNameLabel.setVisible(true);
+        userNameLabel.setText(userName);
+
+        if (allAppointments!= null) {
+
+            apptID.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("apptID"));
+            startTime.setCellValueFactory(new PropertyValueFactory<Appointments, Timestamp>("start"));
+
+
+            FilteredList<Appointments> filteredData = new FilteredList<>(allAppointments, b -> true);
+
+            appointmentSearchText.textProperty().addListener((observableValue, oldValue, newValue) -> {
+                filteredData.setPredicate(Appointments -> {
+                    if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {
+                        return true;
+                    }
+
+                    String searchKeyword = newValue.toLowerCase();
+
+                    if (String.valueOf(Appointments.getStart()).indexOf(searchKeyword) > -1) {
+                        return true;
+                    } else if (String.valueOf(Appointments.getApptID()).indexOf(searchKeyword)  > -1) {
+                        return true;
+                    } else
+                        return false;
+                });
+            });
+
+            SortedList<Appointments> sortedData = new SortedList<>(filteredData);
+            sortedData.comparatorProperty().bind(appointmentsTable.comparatorProperty());
+            appointmentsTable.setItems(sortedData);
 
         }
 
-        if (allAppointments != null) {
-            userNameLabel.setText(userName);
-            userNameLabel.setVisible(true);
-            this.apptID.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("apptID"));
-            this.startTime.setCellValueFactory(new PropertyValueFactory<Appointments, Timestamp>("start"));
+        if (allCustomers!= null) {
 
-            appointmentsTable.setItems(allAppointments);
+            customersNameColumn.setCellValueFactory(new PropertyValueFactory<Customers, String>("customerName"));
+            customersAddressColumn.setCellValueFactory(new PropertyValueFactory<Customers, String>("address"));
+            customersPhoneColumn.setCellValueFactory(new PropertyValueFactory<Customers, String>("phoneNumber"));
 
-            this.customersNameColumn.setCellValueFactory(new PropertyValueFactory<Customers, String>("customerName"));
-            this.customersAddressColumn.setCellValueFactory(new PropertyValueFactory<Customers, String>("address"));
-            this.customersPhoneColumn.setCellValueFactory(new PropertyValueFactory<Customers, String>("phoneNumber"));
+            FilteredList<Customers> filteredData = new FilteredList<>(allCustomers, b -> true);
 
-            customersTable.setItems(allCustomers);
+            customerSearchText.textProperty().addListener((observableValue, oldValue, newValue) -> {
+                filteredData.setPredicate(Customers -> {
+                    if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {
+                        return true;
+                    }
 
+                    String searchKeyword = newValue.toLowerCase();
+
+                    if (Customers.getCustomerName().toLowerCase().indexOf(searchKeyword) > -1) {
+                        return true;
+                    } else if (Customers.getPhoneNumber().toLowerCase().indexOf(searchKeyword)  > -1) {
+                        return true;
+                    } else if (Customers.getAddress().toLowerCase().indexOf(searchKeyword)  > -1) {
+                        return true;
+                    } else
+                        return false;
+                });
+            });
+
+            SortedList<Customers> sortedData = new SortedList<>(filteredData);
+            sortedData.comparatorProperty().bind(customersTable.comparatorProperty());
+            customersTable.setItems(sortedData);
         }
 
     }

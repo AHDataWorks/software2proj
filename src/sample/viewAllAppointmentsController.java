@@ -75,13 +75,48 @@ public class viewAllAppointmentsController implements Initializable {
     @FXML
     private TableColumn<Appointments, String> typeColumn;
 
+    @FXML
+    private Label debriefingsCount;
+
+    @FXML
+    private Label planningSessionCount;
+
+    @FXML
+    private Label appointmentCount;
+
     static public ObservableList<Appointments> allAppointmentsAllUsers = FXCollections.observableArrayList();
 
     static public ObservableList<Appointments> allAppointmentsAllUsersByWeek = FXCollections.observableArrayList();
 
+    static public ObservableList<Appointments> allAppointmentsAllUsersByMonth = FXCollections.observableArrayList();
+
+    static int allApptsCount;
+
+    static int userID;
+
+    static int pSessionCount = 0;
+
+    static int debrieffingCount = 0;
+
+    @FXML
+    public static void initUserID(int currUserID) {
+        userID = currUserID;
+    }
+
     @FXML
     public static void initAllAppointmentsForAllUsers() throws SQLException {
         allAppointmentsAllUsers = AppointmentsQuery.allAppointmentsAllUsers();
+        allAppointmentsAllUsersByWeek = AppointmentsQuery.allAppointmentsByUserIDByWeek(userID);
+        allAppointmentsAllUsersByMonth = AppointmentsQuery.allAppointmentsByUserIDByMonth(userID);
+        allApptsCount = allAppointmentsAllUsers.size();
+        for (Appointments appointment : allAppointmentsAllUsers) {
+            String type = appointment.getType();
+            if (type.equals("Planning Session")) {
+                pSessionCount = pSessionCount + 1;
+            } else if (type.equals("De-Briefing")) {
+                debrieffingCount = debrieffingCount + 1;
+            }
+        }
     }
 
     @FXML
@@ -108,13 +143,22 @@ public class viewAllAppointmentsController implements Initializable {
     }
 
     @FXML
-    void radioSwitch(ActionEvent event) {
+    void switchToReports(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("reports.fxml"));
+        ReportsController controller = fxmlLoader.getController();
+//        controller.initAddProductData(imsInventory);
+        controller.initMonthsForComboBox();
 
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        if (allAppointmentsAllUsers != null) {
+    @FXML
+    void radioSwitch(ActionEvent event) {
+        if(viewByMonthButton.isSelected()) {
+            System.out.println("ping month");
 
             this.aptIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("apptID"));
             this.customerIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("customerID"));
@@ -128,18 +172,86 @@ public class viewAllAppointmentsController implements Initializable {
             this.customerIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("customerID"));
             this.userIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("userID"));
 
+            appointmentTable.setItems(allAppointmentsAllUsersByMonth);
 
+        } else if (viewByWeekButton.isSelected()) {
+            System.out.println("ping week");
 
+            this.aptIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("apptID"));
+            this.customerIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("customerID"));
+            this.typeColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("type"));
+            this.titleColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("title"));
+            this.descriptionColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("description"));
+            this.locationColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("location"));
+            this.contactColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("contactID"));
+            this.startColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("start"));
+            this.endColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("end"));
+            this.customerIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("customerID"));
+            this.userIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("userID"));
 
+            appointmentTable.setItems(allAppointmentsAllUsersByWeek);
+        } else if (viewAllButton.isSelected()) {
+            System.out.println("ping all");
 
+            if (allAppointmentsAllUsers != null) {
 
+                this.aptIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("apptID"));
+                this.customerIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("customerID"));
+                this.typeColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("type"));
+                this.titleColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("title"));
+                this.descriptionColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("description"));
+                this.locationColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("location"));
+                this.contactColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("contactID"));
+                this.startColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("start"));
+                this.endColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("end"));
+                this.customerIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("customerID"));
+                this.userIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("userID"));
 
-//            this.startTime.setCellValueFactory(new PropertyValueFactory<Appointments, Timestamp>("start"));
+                appointmentTable.setItems(allAppointmentsAllUsers);
 
-            appointmentTable.setItems(allAppointmentsAllUsers);
+            }
 
-
-
+        } else {
+            viewAllButton.setSelected(true);
         }
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        appointmentCount.setText(String.valueOf(allApptsCount));
+        debriefingsCount.setText(String.valueOf(debrieffingCount));
+        planningSessionCount.setText(String.valueOf(pSessionCount));
+
+        if(viewByMonthButton.isSelected()) {
+            System.out.println("ping month");
+
+        } else if (viewByWeekButton.isSelected()) {
+            System.out.println("ping week");
+        } else if (viewAllButton.isSelected()) {
+            System.out.println("ping all");
+
+            if (allAppointmentsAllUsers != null) {
+
+                this.aptIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("apptID"));
+                this.customerIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("customerID"));
+                this.typeColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("type"));
+                this.titleColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("title"));
+                this.descriptionColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("description"));
+                this.locationColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("location"));
+                this.contactColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("contactID"));
+                this.startColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("start"));
+                this.endColumn.setCellValueFactory(new PropertyValueFactory<Appointments, String>("end"));
+                this.customerIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("customerID"));
+                this.userIDColumn.setCellValueFactory(new PropertyValueFactory<Appointments, Integer>("userID"));
+
+                appointmentTable.setItems(allAppointmentsAllUsers);
+
+            }
+
+        } else {
+            viewAllButton.setSelected(true);
+        }
+
     }
 }

@@ -14,9 +14,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.io.IOException;
 import java.net.URL;
@@ -116,13 +118,16 @@ public class AddAppointmentController implements Initializable {
 
     static ObservableList<String> allTypesForComboBox = FXCollections.observableArrayList();
 
+    static ObservableList<Appointments> allAppointmentsForThisUserID = FXCollections.observableArrayList();
 
+    static long timeDifference;
 
     public static int userID;
 
     @FXML
-    public static void initUserID(int userIDNumber) {
+    public static void initUserID(int userIDNumber) throws SQLException {
         userID = userIDNumber;
+        allAppointmentsForThisUserID = AppointmentsQuery.allAppointmentsByUserID(userID);
     }
 
     @FXML
@@ -283,31 +288,251 @@ public class AddAppointmentController implements Initializable {
                 .toInstant());
     }
 
-    public static boolean timeCheck(Timestamp startDateTime, Timestamp endDateTime, Timestamp ts) throws ParseException {
+    public static void initTimeDifference() {
+
+        String thisTimeZone = TimeZone.getDefault().getID();
+        ZoneId thisZone = ZoneId.of(thisTimeZone);
+
+        String businessTimeZone3 = String.valueOf(ZoneId.of("America/New_York"));
+
+        ZoneId businessTimeZone = ZoneId.of("America/New_York");
+
+        TimeZone businessTimeZone2 = TimeZone.getTimeZone("America/New_York");
+
+
+
+        String startDateTimeStr = null;
+        String endDateTimeStr = null;
+        ZoneId setZoneID = ZoneId.of("America/New_York");
+        LocalDateTime startLDT = LocalDateTime.now();
+        LocalDateTime endLDT = LocalDateTime.now();
+
+        ZoneId mzid = ZoneId.systemDefault();
+        ZoneId estZoneID = ZoneId.of("America/New_York");
+        ZonedDateTime startZDT = ZonedDateTime.of(startLDT,estZoneID);
+        ZonedDateTime endZDT = ZonedDateTime.of(endLDT,estZoneID);
+        ZonedDateTime startRawZDT = ZonedDateTime.of(startLDT,mzid);
+        ZonedDateTime endRawZDT = ZonedDateTime.of(endLDT,mzid);
+
+//        DateFormat altFormat = new SimpleDateFormat("hh:mm");
+//        altFormat.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+
+        LocalTime adjustedStartTime = LocalTime.now();
+        LocalTime adjustedEndTime = LocalTime.now();
+
+//        LocalTime adjustedStartTime = startZDT.toLocalTime();
+//        LocalTime adjustedEndTime = endZDT.toLocalTime();
+
+        LocalTime businessStartTime = LocalTime.of(8,0);
+        LocalTime businessEndTime = LocalTime.of(22,0);
+
+        ZonedDateTime businessTimestamp = ZonedDateTime.now(estZoneID);
+        ZonedDateTime nowTimestamp = ZonedDateTime.now();
+
+        ZoneOffset zoneOffsetAppt = thisZone.getRules().getOffset(LocalDateTime.now(ZoneId.from(nowTimestamp))); // THIS
+        ZoneOffset zoneOffsetBusiness = businessTimeZone.getRules().getOffset(Instant.from(businessTimestamp)); // THIS
+
+        String strZOA = String.valueOf(zoneOffsetAppt);
+
+        long result = zoneOffsetAppt.compareTo(zoneOffsetBusiness) / 3600;
+
+        OffsetTime offsetStart = adjustedStartTime.atOffset(zoneOffsetAppt);
+        OffsetTime offsetEnd = adjustedEndTime.atOffset(zoneOffsetAppt);
+        OffsetTime offsetBusinessStart = businessStartTime.atOffset(zoneOffsetBusiness);
+        OffsetTime offsetBusinessEnd = businessEndTime.atOffset(zoneOffsetBusiness);
+
+        timeDifference = result;
+
+        System.out.println("offset compare to: " + result);
+
+    }
+
+    public static boolean timeCheck(LocalTime lt, LocalDate ld, LocalTime ltEnd, LocalDate ldEnd,long timeDifference) throws ParseException {
         boolean result = true;
 
-        Calendar calendar = Calendar.getInstance();
-        Calendar easternTime = new GregorianCalendar(TimeZone.getTimeZone("EST"));
-        DayOfWeek sunday = DayOfWeek.SUNDAY;
-        DayOfWeek saturday = DayOfWeek.SATURDAY;
+        String thisTimeZone = TimeZone.getDefault().getID();
+
+
+        Date date2 = new Date();
+        long time2 = date2.getTime();
+//        TimeZone.setDefault(TimeZone.getTimeZone("EST"));
+        Timestamp ts2 = new Timestamp(time2);
+
+
+        String startDateTimeStr = null;
+        String endDateTimeStr = null;
+        ZoneId setZoneID = ZoneId.of("America/New_York");
+        LocalDateTime startLDT = LocalDateTime.of(ld,lt);
+        LocalDateTime endLDT = LocalDateTime.of(ldEnd,ltEnd);
+
+        ZoneId mzid = ZoneId.systemDefault();
+        ZoneId estZoneID = ZoneId.of("America/New_York");
+        ZonedDateTime startZDT = ZonedDateTime.of(startLDT,estZoneID);
+        ZonedDateTime endZDT = ZonedDateTime.of(endLDT,estZoneID);
+        ZonedDateTime startRawZDT = ZonedDateTime.of(startLDT,mzid);
+        ZonedDateTime endRawZDT = ZonedDateTime.of(endLDT,mzid);
+
+
+        DayOfWeek startDayOfWeek = DayOfWeek.from(startZDT);
+        DayOfWeek endDayOfWeek = DayOfWeek.from(endZDT);
+
+
+        LocalTime adjustedStartTime = startZDT.toLocalTime();
+        LocalTime adjustedEndTime = endZDT.toLocalTime();
+
+
+        LocalTime businessStartTime = LocalTime.of(8,0);
+        LocalTime businessEndTime = LocalTime.of(22,0);
+
+        LocalTime correctedLocalStartTime = adjustedStartTime.plusHours(timeDifference);
+        LocalTime correctedLocalEndTime = adjustedEndTime.plusHours(timeDifference);
+
+        System.out.println("corrected local start time: " + correctedLocalStartTime);
+
+
+
+        int compareStartToStartingTime = correctedLocalStartTime.compareTo(businessStartTime);
+        int compareStartToEndingTime = correctedLocalStartTime.compareTo(businessEndTime);
+        int compareEndToEndingTime = correctedLocalEndTime.compareTo(businessEndTime);
+
+
+
+//        if (startDayOfWeek == sunday || startDayOfWeek == saturday || endDayOfWeek == sunday || endDayOfWeek == saturday) {
+//            result = false;
+//            System.out.println("Day of week check failed.");
+//            errorTextLabel.setVisible(true);
+//            errorTextLabel.setText("Appointments must be between business hours, 8AM-10PM EST.");
+//
+//        }
+
+        if (compareStartToStartingTime < 0) {
+            result = false;
+            System.out.println("Start time outside business hours.");
+//            errorTextLabel.setVisible(true);
+//            errorTextLabel.setText("Appointments must be between business hours, 8AM-10PM EST.");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Starting Date Error");
+            alert.setHeaderText("Error");
+            alert.setContentText("Appointments must be between business hours, 8AM-10PM EST.");
+            alert.show();
+
+
+        }
+
+        if (compareStartToEndingTime > 0) {
+            result = false;
+            System.out.println("Start time outside business hours..");
+//            errorTextLabel.setVisible(true);
+//            errorTextLabel.setText("Appointments must be between business hours, 8AM-10PM EST.");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Date Error");
+            alert.setHeaderText("Error");
+            alert.setContentText("Appointments must be between business hours, 8AM-10PM EST.");
+            alert.show();
+
+        }
+
+        if (compareEndToEndingTime > 0) {
+            result = false;
+            System.out.println("End time outside business hours.");
+//            errorTextLabel.setVisible(true);
+//            errorTextLabel.setText("Appointments must be between business hours, 8AM-10PM EST.");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Date Error");
+            alert.setHeaderText("Error");
+            alert.setContentText("Appointments must be between business hours, 8AM-10PM EST.");
+            alert.show();
+
+        }
+
+
+        startDateTimeStr = startZDT.toLocalDate().toString() + " " + lt +":00";
+        endDateTimeStr = endZDT.toLocalDate().toString() + " " + lt +":00";
+
+        Timestamp startDateTime = Timestamp.valueOf(startDateTimeStr);
+        Timestamp endDateTime = Timestamp.valueOf(endDateTimeStr);
+
 
         if (endDateTime.before(startDateTime)) {
             result = false;
+            System.out.println("end datetime before start datetime check failed.");
+//            errorTextLabel.setVisible(true);
+//            errorTextLabel.setText("Appointment end time must be after its' starting time.");
+            Alert alert = new Alert(Alert.AlertType.WARNING);alert.setTitle("Date Error");
+            alert.setHeaderText("Error");
+            alert.setContentText("Appointment End DateTime must be after its starting time.");
+            alert.show();
+
         }
 
-        if (startDateTime.after(ts)) {
+        if (startDateTime.before(ts2)) {
             result = false;
+            System.out.println("current time after start datetime check failed.");
+//            errorTextLabel.setVisible(true);
+//            errorTextLabel.setText("Cannot schedule appointment for a time that has already passed.");
+            Alert alert = new Alert(Alert.AlertType.WARNING);alert.setTitle("Date Error");
+            alert.setHeaderText("Error");
+            alert.setContentText("Appointment start time cannot be in the past.");
+            alert.show();
         }
 
-        DateFormat tzFormat = new SimpleDateFormat("yyyy-MM-dd");
-        tzFormat.setTimeZone(TimeZone.getTimeZone("EST"));
+//        if (startDateTime.equals(endDateTime)) {
+//            result = false;
+//            System.out.println("start and end time identical.");
+//            System.out.println(startDateTime);
+//            System.out.println(endDateTime);
+////            errorTextLabel.setVisible(true);
+////            errorTextLabel.setText("Cannot schedule appointment for a time that has already passed.");
+//            Alert alert = new Alert(Alert.AlertType.WARNING);alert.setTitle("Date Error");
+//            alert.setHeaderText("Error");
+//            alert.setContentText("An Appointment cannot have the same start and end time.");
+//            alert.show();
+//        }
 
-        tzFormat.parse(startDateTime.toString());
+        return result;
 
-//        Date
-//
-//
-//        if (tzFormat. == sunday)
+    }
+
+    public static boolean overlapCheck(Timestamp startDateTime, Timestamp endDateTime) {
+        boolean result = true;
+
+        for (Appointments appointment : allAppointmentsForThisUserID) {
+            boolean loopCheck1 = false;
+            boolean loopCheck2 = false;
+
+            Timestamp recordedStart = appointment.getStart();
+            Timestamp recordedEnd = appointment.getEnd();
+
+            int rcStartToStartDateTime = recordedStart.compareTo(startDateTime); // negative if observedList startTime is before submitted start time.
+            int startDateTimeToRcStart = startDateTime.compareTo(recordedStart);
+
+            int rcStartToEndDateTime = recordedStart.compareTo(endDateTime); // positive if observedList startTime is after submitted end time.
+            int endDateTimeToRcStart = endDateTime.compareTo(recordedStart);
+
+            int rcEndToStartDateTime = recordedEnd.compareTo(startDateTime); // negative if observedList endTime is before submitted end time.
+            int startDateTimeToRcEnd = startDateTime.compareTo(recordedEnd);
+
+            int rcEndToEndDateTime = recordedEnd.compareTo(endDateTime);
+            int endDateTimeToRcEnd = endDateTime.compareTo(recordedEnd);
+
+            if (rcStartToStartDateTime < 0 && rcEndToStartDateTime <= 0) {
+                loopCheck1 = true;
+            } else if (rcStartToEndDateTime >= 0 && rcEndToEndDateTime > 0) {
+                loopCheck2 = true;
+            }
+
+            if (loopCheck1 == false && loopCheck2 == false) {
+                int apptID = appointment.getApptID();
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Date Error");
+                alert.setHeaderText("Error");
+                alert.setContentText("This appointment has a scheduling overlap with appointment ID: " + apptID);
+                alert.show();
+                result = false;
+                break;
+            }
+
+        }
 
 
         return result;
@@ -439,8 +664,13 @@ public class AddAppointmentController implements Initializable {
 ////        System.out.println(startUtcZDT);
 ////        System.out.println(endUtcZDT);
 
+        boolean passCheck2 = timeCheck(ltStart,ldEnd,ltEnd,ldEnd,timeDifference);
+
         Timestamp startDateTime = dateTimeFormatter(ltStart,ldStart);
         Timestamp endDateTime = dateTimeFormatter(ltEnd,ldEnd);
+
+        boolean passCheck3 = overlapCheck(startDateTime,endDateTime);
+
 
 //        boolean timeCheckPassCheck = timeCheck(startDateTime,endDateTime,ts);
 //        System.out.println(startDateTime);
@@ -472,7 +702,7 @@ public class AddAppointmentController implements Initializable {
             passCheck = true;
         }
 
-        if (passCheck == true) {
+        if (passCheck == true && passCheck2 == true && passCheck3 == true) {
             System.out.println(contactID);
             AppointmentsQuery.addAppointment(title,descriptionText,location,type,startDateTime,endDateTime,ts,userName,ts,userName,realCustomerID,userID,contactID);
             allAppointments = AppointmentsQuery.allAppointmentsByUserID(userID);
@@ -491,6 +721,7 @@ public class AddAppointmentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        System.out.println(timeDifference);
         contactComboBox.setItems(allContactNames);
         startTimeComboBox.setItems(allTimesForComboBox);
         endTimeComboBox.setItems(allTimesForComboBox);
