@@ -7,8 +7,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+/**
+ * <Code>CountriesQuery</Code> handles requests made to the database for the countries table.
+ * @author Andrew Hobbs
+ */
 public abstract class CountriesQuery {
 
+    /**
+     * getAllCountries returns an observable list of all entries into the countries table.
+     * @return An observable list of all entries into the countries table.
+     * @throws SQLException
+     */
     public static ObservableList<Countries> getAllCountries() throws SQLException {
         ObservableList<Countries> allCountries = FXCollections.observableArrayList();
         String sql = "SELECT * FROM countries";
@@ -25,6 +34,11 @@ public abstract class CountriesQuery {
         return allCountries;
     }
 
+    /**
+     * getAllCountryNames returns an observableList of all entries in the countries table.
+     * @return An observableList of all entries in the countries table.
+     * @throws SQLException
+     */
     public static ObservableList<String> getAllCountryNames() throws SQLException {
         ObservableList<String> allCountriesNames = FXCollections.observableArrayList();
         String sql = "SELECT * FROM countries";
@@ -38,6 +52,12 @@ public abstract class CountriesQuery {
         return allCountriesNames;
     }
 
+    /**
+     * getCountryByID returns a string of the corresponding country by country ID.
+     * @param countryID - int value of the selected country ID.
+     * @return A string of the corresponding country by country ID
+     * @throws SQLException
+     */
     public static String getCountryByID(int countryID) throws SQLException {
         String country = null;
         String sql = "SELECT Country FROM countries WHERE Country_ID = ?";

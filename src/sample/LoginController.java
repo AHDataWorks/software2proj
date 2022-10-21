@@ -1,4 +1,7 @@
 package sample;
+
+
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,8 +25,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
-
-
+/**
+ * <code>LoginController</code> class acts as a controller for the login forms.
+ * @author Andrew Hobbs
+ */
 public class LoginController implements Initializable {
 
     Stage stage;
@@ -62,6 +67,11 @@ public class LoginController implements Initializable {
 
     String record = "testing";
 
+    /**
+     * initFilewriter creates the buffered file writer object that records login activity.
+     * @param record
+     */
+
     public void initFilewriter(String record) {
         try {
             buffWriter = new BufferedWriter(new FileWriter(new File(" login_activity.txt"),true));
@@ -72,6 +82,12 @@ public class LoginController implements Initializable {
         }
     }
 
+    /**
+     * loginSubmit attempts to retrieve a UserID with the parameters provided in the userID and password textfields.
+     * @param event
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
     public void loginSubmit(ActionEvent event) throws IOException, SQLException {
         Timestamp timeStampFinal = Timestamp.from(ZonedDateTime.now().toInstant());

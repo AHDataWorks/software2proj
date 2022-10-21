@@ -26,7 +26,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-
+/**
+ * <code>MainSceneController</code> acts as the controller for the main scene after logging in.
+ * @author Andrew Hobbs
+ */
 
 public class MainSceneController implements Initializable {
 
@@ -100,25 +103,44 @@ public class MainSceneController implements Initializable {
     @FXML
     private TextField customerSearchText;
 
+    /**
+     * initUserID - retrieves the cooresponding UserName that would match the userID.
+     * @param userIDNumber - the userID number sent in from login controller.
+     * @throws SQLException
+     */
     @FXML
     public static void initUserID(int userIDNumber) throws SQLException {
-
         userID = userIDNumber;
         userName = UsersQuery.getUserName(userID);
     }
 
+    /**
+     * initAllAppts - accepts the ObservedList of appointments from the login controller.
+     * @param allApts - all apts refers to the empty observable list declared.
+     */
     @FXML
     public static void initAllAppts(ObservableList allApts) {
         allAppointments = allApts;
     }
 
+    /**
+     * allCustomers is an observableList of all customers .
+     */
     @FXML
     public static ObservableList<Customers> allCustomers;
 
+    /**
+     * initAllCustomers queries the database for all Customers and stores them in an observable list.
+     * @throws SQLException
+     */
     @FXML static void initAllCustomers() throws SQLException {
         allCustomers = CustomersQuery.getAllCustomers();
     }
 
+    /**
+     * intAllCustomers
+     * @param allCustomersFromModify - an observable list of the updated observable list of customers.
+     */
     @FXML
     static void initAllCustomersExisting(ObservableList allCustomersFromModify) {
         allCustomers = allCustomersFromModify;
@@ -126,7 +148,6 @@ public class MainSceneController implements Initializable {
 
     @FXML
     private Label userNameLabel;
-
 
 
     @FXML
@@ -143,6 +164,9 @@ public class MainSceneController implements Initializable {
         }
     }
 
+    /**
+     * initUpcomingApptCheck checks if the user that just logged in has an upcoming appointment within 15 minutes.
+     */
     @FXML
     static void initUpcomingApptCheck() {
 
@@ -175,11 +199,15 @@ public class MainSceneController implements Initializable {
                 alert.show();
             }
         }
-//        System.out.println("local time: " + mldt);
-//        System.out.println("corrected time: " + correctedLocalTime);
-//        System.out.println(timeComparison);
+
     }
 
+    /**
+     * switchToAddCustomer - changes the scene to addCustomer.fxml
+     * @param event - user click.
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
     void switchToAddCustomer(ActionEvent event) throws IOException, SQLException {
         errorLabel.setVisible(false);
@@ -195,6 +223,12 @@ public class MainSceneController implements Initializable {
         stage.show();
     }
 
+    /**
+     * switchToUpdateCustomer - changes the scene to updateCustomer.fxml
+     * @param event
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
     void switchToUpdateCustomer(ActionEvent event) throws IOException, SQLException {
         errorLabel.setVisible(false);
@@ -213,6 +247,12 @@ public class MainSceneController implements Initializable {
         }
     }
 
+    /**
+     * switchToAddAppointment - changes to scene to addAppointment.fxml
+     * @param event - user click.
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
     void switchToAddAppointment(ActionEvent event) throws IOException, SQLException {
         errorLabel.setVisible(false);
@@ -232,6 +272,12 @@ public class MainSceneController implements Initializable {
         stage.show();
     }
 
+    /**
+     * switchToUpdateAppointment - changes the scene to updateAppointment.fxml
+     * @param event - user click.
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
     void switchToUpdateAppointment(ActionEvent event) throws IOException, SQLException {
         errorLabel.setVisible(false);
@@ -258,6 +304,12 @@ public class MainSceneController implements Initializable {
         }
     }
 
+    /**
+     * switchToViewAllAppointments -  changes the scene to viewAllAppointments.fxml
+     * @param event - user click.
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
     void switchToViewAllAppointments(ActionEvent event) throws IOException, SQLException {
         errorLabel.setVisible(false);
@@ -274,12 +326,21 @@ public class MainSceneController implements Initializable {
         stage.show();
     }
 
+    /**
+     * switchToReports - changes the scene to reports.fxml
+     * @param event - user click.
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
-    void switchToReports(ActionEvent event) throws IOException {
+    void switchToReports(ActionEvent event) throws IOException, SQLException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("reports.fxml"));
         ReportsController controller = fxmlLoader.getController();
 //        controller.initAddProductData(imsInventory);
         controller.initMonthsForComboBox();
+        controller.initAllContacts();
+        controller.initAllAppointmentsForAllUsers();
+        controller.initAllUsers();
 
 
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -288,6 +349,12 @@ public class MainSceneController implements Initializable {
         stage.show();
     }
 
+    /**
+     * deleteAppointment - checks if the user has selected an appointment on the table, and removes it from the database.
+     * @param event - user click.
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
     void deleteAppointment(MouseEvent event) throws IOException, SQLException {
         errorLabel.setVisible(false);
@@ -310,6 +377,12 @@ public class MainSceneController implements Initializable {
         }
     }
 
+    /**
+     * deleteCustomer - checks if the user has selected a user on the user table and deletes it from the database if there isn't an appointment scheduled for this customer.
+     * @param event - mouse click.
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
     void deleteCustomer(MouseEvent event) throws IOException, SQLException {
         boolean passCheck = true;
@@ -342,6 +415,9 @@ public class MainSceneController implements Initializable {
     }
 
     @Override
+    /**
+     * Two Lambda expressions are used in this method for dynamic filtering of the UserTable and AppointmentsTable. Text entered into search bars will display matches in the tabledata in real time.
+     */
     public void initialize(URL url, ResourceBundle resourceBundle) {
         userNameLabel.setVisible(true);
         userNameLabel.setText(userName);

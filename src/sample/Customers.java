@@ -2,6 +2,10 @@ package sample;
 
 import java.sql.Timestamp;
 
+/**
+ * <Code>Customers</Code> acts as the constructor class for Customers objects.
+ * @author Andrew Hobbs
+ */
 public class Customers {
     private int customerID;
     private String customerName;
@@ -13,6 +17,20 @@ public class Customers {
     private java.sql.Timestamp lastUpdate;
     private String lastUpdatedBy;
     private int divisionID;
+
+    /**
+     *
+     * @param customerID - int ID of this customer.
+     * @param customerName - String value of this customer's name.
+     * @param address - String value of this customer's address.
+     * @param postalCode - String value of this customer's postal code.
+     * @param phoneNumber - String value of this customer's phone number.
+     * @param createDate - Timestamp value of when this customer record was created.
+     * @param createdBy - String value of the user that created this record.
+     * @param lastUpdate - Timestamp of the last time this record was updated.
+     * @param lastUpdatedBy - String value of the user that last updated this record.
+     * @param divisionID - int ID of a corresponding first level division.
+     */
     public Customers(int customerID,String customerName,String address,String postalCode,String phoneNumber,java.sql.Timestamp createDate,String createdBy,java.sql.Timestamp lastUpdate,String lastUpdatedBy,int divisionID) {
         this.customerID = customerID;
         this.customerName = customerName;

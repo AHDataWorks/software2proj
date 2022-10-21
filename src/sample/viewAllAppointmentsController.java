@@ -23,6 +23,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.time.DayOfWeek;
 
+/**
+ * <Code>viewAllAppointmentsController</Code> acts as a controller for viewAllAppointments.fxml
+ * @author Andrew Hobbs
+ */
 public class viewAllAppointmentsController implements Initializable {
 
     Stage stage;
@@ -105,6 +109,8 @@ public class viewAllAppointmentsController implements Initializable {
 
     @FXML
     public static void initAllAppointmentsForAllUsers() throws SQLException {
+        pSessionCount = 0;
+        debrieffingCount = 0;
         allAppointmentsAllUsers = AppointmentsQuery.allAppointmentsAllUsers();
         allAppointmentsAllUsersByWeek = AppointmentsQuery.allAppointmentsByUserIDByWeek(userID);
         allAppointmentsAllUsersByMonth = AppointmentsQuery.allAppointmentsByUserIDByMonth(userID);
@@ -143,11 +149,15 @@ public class viewAllAppointmentsController implements Initializable {
     }
 
     @FXML
-    void switchToReports(ActionEvent event) throws IOException {
+    void switchToReports(ActionEvent event) throws IOException, SQLException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("reports.fxml"));
         ReportsController controller = fxmlLoader.getController();
 //        controller.initAddProductData(imsInventory);
         controller.initMonthsForComboBox();
+        controller.initUserID(userID);
+        controller.initAllContacts();
+        controller.initAllAppointmentsForAllUsers();
+        controller.initAllUsers();
 
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(fxmlLoader.load());

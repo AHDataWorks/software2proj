@@ -2,6 +2,9 @@ package sample;
 import java.sql.Time;
 import java.sql.Timestamp;
 
+/**
+ * <Code>FirstLevelDivisions</Code> acts as the constructor class for all FirstLevelDivision objects.
+ */
 public class FirstLevelDivisions {
     private int divisionID;
     private String division;
@@ -10,6 +13,17 @@ public class FirstLevelDivisions {
     private Timestamp lastUpdate;
     private String lastUpdatedBy;
     private int countryID;
+
+    /**
+     *
+     * @param divisionID - int value of this division. Unique and auto generated on the database.
+     * @param division - String value of the name of this division.
+     * @param createDate - Timestamp value of when this record was created.
+     * @param createdBy - String value of the user that created this record.
+     * @param lastUpdate - Timestamp value of the last time this record was updated.
+     * @param lastUpdatedBy - String value of the last user to update this record.
+     * @param countryID - int value of which country this division belongs to.
+     */
     public FirstLevelDivisions(int divisionID,String division,Timestamp createDate,String createdBy,Timestamp lastUpdate,String lastUpdatedBy,int countryID) {
         this.divisionID = divisionID;
         this.division = division;

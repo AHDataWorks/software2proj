@@ -18,6 +18,14 @@ import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * The <code>Main</code> class contains our main method sets the javafx stage we will use.
+ * @author Andrew Hobbs
+ * @version 1.0.0 Oct 19, 2022
+ *
+ * Javadoc Folder is located in HelloWorldJFX folder.
+ */
+
 public class Main extends Application {
     public BufferedWriter buffWriter = null;
 
@@ -46,6 +54,11 @@ public class Main extends Application {
             exitProgram(primaryStage);
         });
     }
+
+    /**
+     * exitProgram adds a confirmation alert when the user tries to exit the program by closing the window.
+     * @param stage the stage initiated when the program begins.
+     */
     public void exitProgram(Stage stage) {
         Timestamp timeStampFinal = Timestamp.from(ZonedDateTime.now().toInstant());
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

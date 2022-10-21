@@ -15,13 +15,13 @@
    <children>
       <TableView fx:id="contactTable" layoutX="200.0" layoutY="33.0" prefHeight="309.0" prefWidth="518.0" visible="false">
         <columns>
-          <TableColumn prefWidth="65.0" text="Appt ID" />
-          <TableColumn prefWidth="60.0" text="Title" />
-            <TableColumn prefWidth="62.0" text="Type" />
-            <TableColumn prefWidth="120.0" text="Description" />
-            <TableColumn prefWidth="62.0" text="Start" />
-            <TableColumn prefWidth="63.0" text="End" />
-            <TableColumn prefWidth="85.0" text="Customer ID" />
+          <TableColumn fx:id="apptIDColumnContact" prefWidth="65.0" text="Appt ID" />
+          <TableColumn fx:id="titleColumnContact" prefWidth="60.0" text="Title" />
+            <TableColumn fx:id="typeColumnContact" prefWidth="62.0" text="Type" />
+            <TableColumn fx:id="descriptionColumnContact" prefWidth="120.0" text="Description" />
+            <TableColumn fx:id="startColumnContact" prefWidth="62.0" text="Start" />
+            <TableColumn fx:id="endColumnContact" prefWidth="63.0" text="End" />
+            <TableColumn fx:id="customerIDColumnContact" prefWidth="85.0" text="Customer ID" />
         </columns>
       </TableView>
       <Button fx:id="doneButton" layoutX="667.0" layoutY="355.0" mnemonicParsing="false" onAction="#switchToMain" text="Done" />
@@ -31,28 +31,28 @@
             <Font name="System Bold Italic" size="14.0" />
          </font>
       </Label>
-      <RadioButton fx:id="typeMonthButton" layoutX="34.0" layoutY="87.0" mnemonicParsing="false" onAction="#typeMonthRadioSelected" selected="true" text="Type / Month">
+      <RadioButton fx:id="typeMonthButton" layoutX="34.0" layoutY="87.0" mnemonicParsing="false" selected="true" text="Type / Month">
          <toggleGroup>
             <ToggleGroup fx:id="reportGroup" />
          </toggleGroup>
       </RadioButton>
-      <RadioButton fx:id="contactButton" layoutX="34.0" layoutY="121.0" mnemonicParsing="false" onAction="#contactRadioSelected" text="Contact" toggleGroup="$reportGroup" />
-      <RadioButton fx:id="userButton" layoutX="34.0" layoutY="157.0" mnemonicParsing="false" onAction="#userRadioSelected" text="User" toggleGroup="$reportGroup" />
+      <RadioButton fx:id="contactButton" layoutX="34.0" layoutY="121.0" mnemonicParsing="false" text="Contact" toggleGroup="$reportGroup" />
+      <RadioButton fx:id="userButton" layoutX="34.0" layoutY="157.0" mnemonicParsing="false" text="User" toggleGroup="$reportGroup" />
       <ComboBox fx:id="userComboBox" layoutX="200.0" layoutY="355.0" prefWidth="150.0" promptText="Select User" visible="false" />
       <ComboBox fx:id="contactComboBox" layoutX="200.0" layoutY="355.0" prefWidth="150.0" promptText="Select Contact" visible="false" />
       <ComboBox fx:id="monthComboBox" layoutX="200.0" layoutY="355.0" prefWidth="150.0" promptText="Select Month" />
       <TableView fx:id="userTable" layoutX="201.0" layoutY="34.0" prefHeight="309.0" prefWidth="518.0" visible="false">
          <columns>
-            <TableColumn prefWidth="65.0" text="Appt ID" />
-            <TableColumn prefWidth="60.0" text="Title" />
-            <TableColumn prefWidth="62.0" text="Type" />
-            <TableColumn prefWidth="120.0" text="Description" />
-            <TableColumn prefWidth="62.0" text="Start" />
-            <TableColumn prefWidth="63.0" text="End" />
-            <TableColumn prefWidth="85.0" text="Customer ID" />
+            <TableColumn fx:id="apptIDColumnUser" prefWidth="65.0" text="Appt ID" />
+            <TableColumn fx:id="titleColumnUser" prefWidth="60.0" text="Title" />
+            <TableColumn fx:id="typeColumnUser" prefWidth="62.0" text="Type" />
+            <TableColumn fx:id="descriptionColumnUser" prefWidth="120.0" text="Description" />
+            <TableColumn fx:id="startColumnUser" prefWidth="62.0" text="Start" />
+            <TableColumn fx:id="endColumnUser" prefWidth="63.0" text="End" />
+            <TableColumn fx:id="customerIDColumnUser" prefWidth="85.0" text="Customer ID" />
          </columns>
       </TableView>
-      <Label fx:id="monthLabel" layoutX="342.0" layoutY="74.0" text="Month's Appointments">
+      <Label fx:id="monthLabel" layoutX="342.0" layoutY="74.0" text="Select a Month">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
@@ -67,12 +67,12 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="debriefingCount" layoutX="307.0" layoutY="138.0" text="110">
+      <Label fx:id="debriefingCount" layoutX="307.0" layoutY="138.0" text="0" visible="false">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
-      <Label fx:id="planningSessionCount" layoutX="527.0" layoutY="138.0" text="110">
+      <Label fx:id="planningSessionCount" layoutX="527.0" layoutY="138.0" text="0" visible="false">
          <font>
             <Font size="14.0" />
          </font>

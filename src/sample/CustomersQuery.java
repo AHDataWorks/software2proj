@@ -8,8 +8,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+/**
+ * <Code>CustomersQuery</Code> handles requests for the customers table on the database.
+ * @author Andrew Hobbs
+ */
 public abstract class CustomersQuery {
 
+    /**
+     * addCustomer accepts new parameters to create a new entry on the customers table.
+     * @param customerName - String value of this customer's name.
+     * @param address - String value of this customer's address.
+     * @param postalCode - String value of this customer's postal code.
+     * @param phoneNumber - String value of this customer's phone number.
+     * @param createDate - Timestamp value of when this customer record was created.
+     * @param createdBy - String value of the user that created this record.
+     * @param lastUpdate - Timestamp of the last time this record was updated.
+     * @param lastUpdatedBy - String value of the user that last updated this record.
+     * @param divisionID - int ID of a corresponding first level division.
+     * @throws SQLException
+     */
     public static void addCustomer(String customerName, String address, String postalCode, String phoneNumber, Timestamp createDate, String createdBy, Timestamp lastUpdate, String lastUpdatedBy, int divisionID) throws SQLException {
         String sql = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Create_Date, Created_By, Last_Update, Last_Updated_By, Division_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -27,6 +44,20 @@ public abstract class CustomersQuery {
 
     }
 
+    /**
+     * updateCustomer updates the selected customer record.,
+     * @param customerName - String value of this customer's name.
+     * @param address - String value of this customer's address.
+     * @param postalCode - String value of this customer's postal code.
+     * @param phoneNumber - String value of this customer's phone number.
+     * @param createDate - Timestamp value of when this customer record was created.
+     * @param createdBy - String value of the user that created this record.
+     * @param lastUpdate - Timestamp of the last time this record was updated.
+     * @param lastUpdatedBy - String value of the user that last updated this record.
+     * @param divisionID - int ID of a corresponding first level division.
+     * @param customerID - int value of this customer record to be updated.
+     * @throws SQLException
+     */
     public static void updateCustomer(String customerName, String address, String postalCode, String phoneNumber, Timestamp createDate, String createdBy, Timestamp lastUpdate, String lastUpdatedBy, int divisionID, int customerID) throws SQLException {
         String sql = "UPDATE customers SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, Create_Date = ?, Created_By = ?, Last_Update = ?, Last_Updated_By = ?, Division_ID = ? WHERE Customer_ID = ? ";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -46,6 +77,11 @@ public abstract class CustomersQuery {
 
     }
 
+    /**
+     * getAllCustomers returns an observable list of all customer records.
+     * @return an observable list of all customer records.
+     * @throws SQLException
+     */
     public static ObservableList<Customers> getAllCustomers() throws SQLException {
         ObservableList<Customers> allCustomers = FXCollections.observableArrayList();
         String sql = "SELECT * FROM customers ";
@@ -70,6 +106,11 @@ public abstract class CustomersQuery {
         return allCustomers;
     }
 
+    /**
+     * deleteCustomer removes the selected customer record from the customers table.
+     * @param customerID - the corresponding int ID of this customer.
+     * @throws SQLException
+     */
     public static void deleteCustomer(int customerID) throws SQLException {
         String sql = "DELETE FROM customers WHERE Customer_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);

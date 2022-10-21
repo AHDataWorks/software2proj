@@ -17,7 +17,6 @@
             <TableColumn fx:id="customersPhoneColumn" prefWidth="142.0" text="Phone Number" />
         </columns>
       </TableView>
-      <Button fx:id="exitButton" layoutX="1002.0" layoutY="439.0" mnemonicParsing="false" onAction="#exitProgram" onMouseClicked="#exitProgram" text="Exit" />
       <TableView fx:id="appointmentsTable" layoutX="633.0" layoutY="126.0" prefHeight="258.0" prefWidth="234.0">
         <columns>
           <TableColumn fx:id="apptID" prefWidth="108.0" text="Appointment ID" />

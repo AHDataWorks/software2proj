@@ -7,7 +7,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * <Code>ContactsQuery</Code> handles database requests for the Contacts table.
+ * @author Andrew Hobbs
+ */
 public abstract class ContactsQuery {
+    /**
+     * allContacts
+     * @return an observable list of all contacts on the contacts table.
+     * @throws SQLException
+     */
     public static ObservableList<Contacts> allContacts() throws SQLException {
         ObservableList<Contacts> allContacts = FXCollections.observableArrayList();
         String sql = "SELECT * FROM contacts ";
@@ -25,6 +34,11 @@ public abstract class ContactsQuery {
         return allContacts;
     }
 
+    /**
+     * allContactNames returns an observable list of all the entries under the column Contact_Name
+     * @return returns an observable list of all the entries under the column Contact_Name
+     * @throws SQLException
+     */
     public static ObservableList<String> allContactNames() throws SQLException {
         ObservableList<String> allContactnames = FXCollections.observableArrayList();
         String sql = "SELECT * FROM contacts ";
@@ -40,6 +54,12 @@ public abstract class ContactsQuery {
         return allContactnames;
     }
 
+    /**
+     * getContactID returns an int of the contact name passed in.
+     * @param contactName - String of the known contactName
+     * @return int of this corresponding contactID.
+     * @throws SQLException
+     */
     public static int getContactID(String contactName) throws SQLException {
         int contactID = 0;
         String sql = "SELECT Contact_ID FROM contacts WHERE Contact_Name = ?";
@@ -52,6 +72,12 @@ public abstract class ContactsQuery {
         return contactID;
     }
 
+    /**
+     * getContactName returns the contactName of the selected corresponding contactID
+     * @param contactID int of the selected contactID
+     * @return String of the corresponding contact name.
+     * @throws SQLException
+     */
     public static String getContactName(int contactID) throws SQLException {
         String contactName = null;
         String sql = "SELECT Contact_Name FROM contacts WHERE Contact_ID = ?";

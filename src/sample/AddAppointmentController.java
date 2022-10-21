@@ -27,6 +27,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.*;
 
+/**
+ * <Code>AddAppointmentController</Code> adds new appointment objects to the database.
+ * @author Andrew Hobbs
+ */
+
 public class AddAppointmentController implements Initializable {
     @FXML
     private TextField appointmentIDText;
@@ -124,22 +129,38 @@ public class AddAppointmentController implements Initializable {
 
     public static int userID;
 
+    /**
+     * initUserID accepts an integer from another controller and assigns the ObservableList allAppointmentsForThisUserID.
+     * @param userIDNumber
+     * @throws SQLException
+     */
     @FXML
     public static void initUserID(int userIDNumber) throws SQLException {
         userID = userIDNumber;
         allAppointmentsForThisUserID = AppointmentsQuery.allAppointmentsByUserID(userID);
     }
 
+    /**
+     * initAllAppts accepts an observableList of all appointments and assigns it to an observableList.
+     * @param allApts
+     */
     @FXML
     public static void initAllAppts(ObservableList allApts) {
         allAppointments = allApts;
     }
 
+    /**
+     * initAllTypes queries the database for all types and sets it to an observableList to be used in the Types combo box.
+     * @throws SQLException
+     */
     @FXML
     public static void initAllTypes() throws SQLException {
         allTypesForComboBox = AppointmentsQuery.allTypes();
     }
 
+    /**
+     * initApptTimes adds values to be available to choose in the combobox.
+     */
     @FXML
     public static void initApptTimes() {
         allTimesForComboBox.add("12:00 AM");
@@ -168,6 +189,11 @@ public class AddAppointmentController implements Initializable {
         allTimesForComboBox.add("11:00 PM");
     }
 
+    /**
+     * timeConverter accepts the localized string value and returns a formatted string value
+     * @param comboBoxTime - the current selection in the combobox
+     * @return a formatted string value to be used in a timestamp.
+     */
     @FXML
     public static String timeConverter(String comboBoxTime) {
         String result = null;
@@ -246,6 +272,12 @@ public class AddAppointmentController implements Initializable {
         return result;
     }
 
+    /**
+     * dateTimeFormatter accepts a localdate and localtime and returns a formatted string of them combined.
+     * @param lt localtime
+     * @param ld localdate
+     * @return
+     */
     @FXML
     public static Timestamp dateTimeFormatter(LocalTime lt,LocalDate ld) {
         String formattedString = null;
@@ -261,12 +293,22 @@ public class AddAppointmentController implements Initializable {
         return Timestamp.valueOf(formattedString);
     }
 
+    /**
+     * initAllContacts queries the database and assigns an observableList of all contacts and an observable list of all contact names.
+     * @throws SQLException
+     */
     @FXML
     public static void initAllContacts() throws SQLException {
         allContacts = ContactsQuery.allContacts();
         allContactNames = ContactsQuery.allContactNames();
     }
 
+    /**
+     * cancelButton returns the user to mainScene.fxml without making changes to the database.
+     * @param event - user click.
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
     void cancelButton(ActionEvent event) throws IOException, SQLException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("mainScene.fxml"));
@@ -281,13 +323,10 @@ public class AddAppointmentController implements Initializable {
         stage.show();
     }
 
-    public static Date convertToDate(LocalDate date, ZoneId zoneId) {
-        return Date.from(date
-                .atStartOfDay().atZone(
-                        zoneId)
-                .toInstant());
-    }
 
+    /**
+     * initTimeDifference captures the users current timezone and compares it to the EST timezone, the difference is saved to an int value and used to adjust the current time before performing checks.
+     */
     public static void initTimeDifference() {
 
         String thisTimeZone = TimeZone.getDefault().getID();
@@ -298,7 +337,6 @@ public class AddAppointmentController implements Initializable {
         ZoneId businessTimeZone = ZoneId.of("America/New_York");
 
         TimeZone businessTimeZone2 = TimeZone.getTimeZone("America/New_York");
-
 
 
         String startDateTimeStr = null;
@@ -347,6 +385,16 @@ public class AddAppointmentController implements Initializable {
 
     }
 
+    /**
+     * timeCheck performs various checks and returns true if this starttime and endtime are acceptable to add to the database.
+     * @param lt local start time.
+     * @param ld local start date.
+     * @param ltEnd local end time.
+     * @param ldEnd local end date.
+     * @param timeDifference the time difference value from the previous method.
+     * @return
+     * @throws ParseException
+     */
     public static boolean timeCheck(LocalTime lt, LocalDate ld, LocalTime ltEnd, LocalDate ldEnd,long timeDifference) throws ParseException {
         boolean result = true;
 
@@ -397,13 +445,6 @@ public class AddAppointmentController implements Initializable {
 
 
 
-//        if (startDayOfWeek == sunday || startDayOfWeek == saturday || endDayOfWeek == sunday || endDayOfWeek == saturday) {
-//            result = false;
-//            System.out.println("Day of week check failed.");
-//            errorTextLabel.setVisible(true);
-//            errorTextLabel.setText("Appointments must be between business hours, 8AM-10PM EST.");
-//
-//        }
 
         if (compareStartToStartingTime < 0) {
             result = false;
@@ -476,23 +517,17 @@ public class AddAppointmentController implements Initializable {
             alert.show();
         }
 
-//        if (startDateTime.equals(endDateTime)) {
-//            result = false;
-//            System.out.println("start and end time identical.");
-//            System.out.println(startDateTime);
-//            System.out.println(endDateTime);
-////            errorTextLabel.setVisible(true);
-////            errorTextLabel.setText("Cannot schedule appointment for a time that has already passed.");
-//            Alert alert = new Alert(Alert.AlertType.WARNING);alert.setTitle("Date Error");
-//            alert.setHeaderText("Error");
-//            alert.setContentText("An Appointment cannot have the same start and end time.");
-//            alert.show();
-//        }
 
         return result;
 
     }
 
+    /**
+     * overlapCheck performs a check if there's an existing appointment within this timeframe.
+     * @param startDateTime the submitted startdate time.
+     * @param endDateTime the submitted enddate time.
+     * @return true if all the checks pass.
+     */
     public static boolean overlapCheck(Timestamp startDateTime, Timestamp endDateTime) {
         boolean result = true;
 
@@ -538,6 +573,13 @@ public class AddAppointmentController implements Initializable {
         return result;
     }
 
+    /**
+     * submitButton collects the information entered into the text fields, performs a check, and if it passes, submits the added Appointment to the database.
+     * @param event - user click.
+     * @throws IOException
+     * @throws SQLException
+     * @throws ParseException
+     */
     @FXML
     void submitButton(ActionEvent event) throws IOException, SQLException, ParseException {
         boolean passCheck = false;
@@ -557,11 +599,7 @@ public class AddAppointmentController implements Initializable {
 
         String title = titleText.getText();
         String location = locationText.getText();
-//        String contact = contactComboBox.getValue().toString();
-//        LocalDate startDate = startDateText.getValue();
-//        String startTime = startTimeComboBox.getValue().toString();
-//        LocalDate endDate = endDateText.getValue();
-//        String endTime = endTimeComboBox.getValue().toString();
+
         String type = typeComboBox.getValue();
         String customerID = customerIDText.getText();
         String userIDNew = userIDText.getText();
@@ -652,17 +690,7 @@ public class AddAppointmentController implements Initializable {
 
         ZoneId mzid = ZoneId.systemDefault();
 
-//        LocalDateTime startLocalDateTime = LocalDateTime.of(ldStart,ltStart);
-////        ZonedDateTime startZDT = ZonedDateTime.of(startLocalDateTime,mzid);
-////        ZoneId utcZoneID = ZoneId.of("UTC");
-////        ZonedDateTime startUtcZDT = ZonedDateTime.ofInstant(startZDT.toInstant(), utcZoneID);
-////
-////        LocalDateTime endLocalDateTime = LocalDateTime.of(ldEnd,ltEnd);
-////        ZonedDateTime endZDT = ZonedDateTime.of(endLocalDateTime,mzid);
-////        ZonedDateTime endUtcZDT = ZonedDateTime.ofInstant(endZDT.toInstant(), utcZoneID);
-////
-////        System.out.println(startUtcZDT);
-////        System.out.println(endUtcZDT);
+
 
         boolean passCheck2 = timeCheck(ltStart,ldEnd,ltEnd,ldEnd,timeDifference);
 
@@ -670,12 +698,6 @@ public class AddAppointmentController implements Initializable {
         Timestamp endDateTime = dateTimeFormatter(ltEnd,ldEnd);
 
         boolean passCheck3 = overlapCheck(startDateTime,endDateTime);
-
-
-//        boolean timeCheckPassCheck = timeCheck(startDateTime,endDateTime,ts);
-//        System.out.println(startDateTime);
-
-
 
 
 

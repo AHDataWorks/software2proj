@@ -147,32 +147,57 @@ public class UpdateAppointmentController implements Initializable {
 
     static long timeDifference;
 
+    /**
+     * initSelectedAppointment accepts the selected appointment from the previous scene and assigns it's appointmentID to selectedApptID.
+     * @param appointment
+     */
     @FXML
     public static void initSelectedAppointment(Appointments appointment) {
         selectedAppointment = appointment;
         selectedApptID = appointment.getApptID();
     }
 
+    /**
+     * initUserID accepts an integer from another controller and assigns the ObservableList allAppointmentsForThisUserID.
+     * @param userIDNumber
+     * @throws SQLException
+     */
     @FXML
     public static void initUserID(int userIDNumber) {
         userID = userIDNumber;
     }
 
+    /**
+     * initAllAppts accepts an observableList of all appointments and assigns it to an observableList.
+     * @param allApts
+     */
     @FXML
     public static void initAllAppts(ObservableList allApts) {
         allAppointments = allApts;
     }
 
+    /**
+     * initAllTypes queries the database for all types and sets it to an observableList to be used in the Types combo box.
+     * @throws SQLException
+     */
     @FXML
     public static void initAllTypes() throws SQLException {
         allTypesForComboBox = AppointmentsQuery.allTypes();
     }
 
+    /**
+     * initSelectedType retrieves the type associated with the selected appointment.
+     * @param selectedAppointment
+     */
     @FXML
     public static void initSelectedType(Appointments selectedAppointment) {
         selectedType = selectedAppointment.getType();
     }
 
+    /**
+     * initFormattedTimes formats the selected appointment's start and end date to local time.
+     * @param selectedAppointment
+     */
     @FXML
     public static void initFormattedTimes(Appointments selectedAppointment) {
         selectedCreatedTime = selectedAppointment.getCreateDate();
@@ -192,6 +217,9 @@ public class UpdateAppointmentController implements Initializable {
         selectedEndLocalTime = localTimeConverter(tempSelectedEndLocalTime);
     }
 
+    /**
+     * initApptTimes adds strings representing possible times for appointments to the observable list.
+     */
     @FXML
     public static void initApptTimes() {
         allTimesForComboBox.add("12:00 AM");
@@ -220,6 +248,11 @@ public class UpdateAppointmentController implements Initializable {
         allTimesForComboBox.add("11:00 PM");
     }
 
+    /**
+     * localTimeConverter looks at the value of the string selected in the combo box and assigns a formated String result, which it returns.
+     * @param comboBoxTime String value of the selection in the combo box.
+     * @return
+     */
     @FXML
     public static String localTimeConverter(String comboBoxTime) {
         String result = null;
@@ -377,7 +410,12 @@ public class UpdateAppointmentController implements Initializable {
     }
 
 
-
+    /**
+     * dateTimeFormatter accepts a local time and date and returns a timestamp corresponding to the UTC equivalent for storage on the database.
+     * @param lt local time.
+     * @param ld local date.
+     * @return
+     */
     @FXML
     public static Timestamp dateTimeFormatter(LocalTime lt,LocalDate ld) {
         String formattedString = null;
@@ -393,6 +431,12 @@ public class UpdateAppointmentController implements Initializable {
         return Timestamp.valueOf(formattedString);
     }
 
+    /**
+     * initSelectedContact takes in an appointment and returns the String value of the corresponding contact.
+     * @param selectedAppointment
+     * @return
+     * @throws SQLException
+     */
     @FXML
     public static String initSelectedContact(Appointments selectedAppointment) throws SQLException {
         int selectedContactID = selectedAppointment.getContactID();
@@ -400,12 +444,22 @@ public class UpdateAppointmentController implements Initializable {
         return selectedContact;
     }
 
+    /**
+     * initAllContacts queries the database for an observable list of all contacts and all contact names and stores them in an observable list.
+     * @throws SQLException
+     */
     @FXML
     public static void initAllContacts() throws SQLException {
         allContacts = ContactsQuery.allContacts();
         allContactNames = ContactsQuery.allContactNames();
     }
 
+    /**
+     * cancelButton returns the user to mainScene.fxml without making any changes to the records on the database.
+     * @param event - user click.
+     * @throws IOException
+     * @throws SQLException
+     */
     @FXML
     void cancelButton(ActionEvent event) throws IOException, SQLException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("mainScene.fxml"));
@@ -420,6 +474,9 @@ public class UpdateAppointmentController implements Initializable {
         stage.show();
     }
 
+    /**
+     * initTimeDifference captures the users current timezone and compares it to the EST timezone, the difference is saved to an int value and used to adjust the current time before performing checks.
+     */
     public static void initTimeDifference() {
 
         String thisTimeZone = TimeZone.getDefault().getID();
@@ -479,6 +536,16 @@ public class UpdateAppointmentController implements Initializable {
 
     }
 
+    /**
+     * timeCheck performs various checks and returns true if this starttime and endtime are acceptable to add to the database.
+     * @param lt local start time.
+     * @param ld local start date.
+     * @param ltEnd local end time.
+     * @param ldEnd local end date.
+     * @param timeDifference the time difference value from the previous method.
+     * @return
+     * @throws ParseException
+     */
     public static boolean timeCheck(LocalTime lt, LocalDate ld, LocalTime ltEnd, LocalDate ldEnd,long timeDifference) throws ParseException {
         boolean result = true;
 
@@ -625,6 +692,12 @@ public class UpdateAppointmentController implements Initializable {
 
     }
 
+    /**
+     * overlapCheck performs a check if there's an existing appointment within this timeframe.
+     * @param startDateTime the submitted startdate time.
+     * @param endDateTime the submitted enddate time.
+     * @return true if all the checks pass.
+     */
     public static boolean overlapCheck(Timestamp startDateTime, Timestamp endDateTime) {
         boolean result = true;
 
@@ -670,6 +743,13 @@ public class UpdateAppointmentController implements Initializable {
         return result;
     }
 
+    /**
+     * submitButton commits the changes to the updated record on the database, if it passes the quality checks.
+     * @param event
+     * @throws IOException
+     * @throws SQLException
+     * @throws ParseException
+     */
     @FXML
     void submitButton(ActionEvent event) throws IOException, SQLException, ParseException {
         boolean passCheck1 = false;
